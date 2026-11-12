@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Coussin intelligent</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 <main>
@@ -145,10 +145,11 @@
   </section>
 </main>
 
-<!-- L'ordre compte : config, la logique, le résumé, puis les sources de données -->
-<script src="config.js"></script>
-<script src="app.js"></script>
-<script src="journee.js"></script>
-<script src="sources.js"></script>
+<!-- L'ordre compte : config, la logique, le résumé, puis les sources de données.
+     Le « ?v=2 » force Chrome à recharger les fichiers : augmente ce numéro à chaque mise à jour. -->
+<script src="config.js?v=2"></script>
+<script src="app.js?v=2"></script>
+<script src="journee.js?v=2"></script>
+<script src="sources.js?v=2"></script>
 </body>
 </html>
