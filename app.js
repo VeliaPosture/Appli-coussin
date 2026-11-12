@@ -181,10 +181,11 @@ function afficher() {
   const n = normaliser(derniere);
 
   // --- Mouvement : variation totale par rapport à la mesure précédente ---
+  let mouvement = false;
   if (precedente) {
     let variation = 0;
     for (const z of zonesBranchees) variation += Math.abs(n[z] - precedente[z]);
-    if (variation > SEUIL_MOUVEMENT) dernierMouvement = tempsActuel;
+    if (variation > SEUIL_MOUVEMENT) { dernierMouvement = tempsActuel; mouvement = true; }
   }
   precedente = n;
 
@@ -231,8 +232,9 @@ function afficher() {
   // --- Équilibre gauche / droite ---
   const g = GAUCHE.filter(z => n[z] !== null).reduce((s, z) => s + n[z], 0);
   const d = DROITE.filter(z => n[z] !== null).reduce((s, z) => s + n[z], 0);
+  let pg = null;                                   // part du poids à gauche (0 à 1)
   if (g + d > 0.05) {
-    const pg = g / (g + d);
+    pg = g / (g + d);
     $("curseur").style.left = ((1 - pg) * 100) + "%";   // va à gauche quand on penche à gauche
     $("pctG").textContent = "G " + Math.round(pg * 100) + " %";
     $("pctD").textContent = "D " + Math.round((1 - pg) * 100) + " %";
@@ -247,6 +249,19 @@ function afficher() {
   $("dos").textContent = !estAssis ? "--" : (appuye ? TEXTES.dosAppuye : TEXTES.dosDecolle);
 
   $("infoCalib").textContent = calibration ? TEXTES.calibre : TEXTES.pasCalibre;
+
+  // --- Ajout de cette mesure au résumé de la journée (journee.js) ---
+  if (typeof compterJournee === "function" && typeof sourceActive === "function" && sourceActive()) {
+    const aDos = DOS.some(z => n[z] !== null);
+    compterJournee({
+      temps: tempsActuel,
+      assis: estAssis,
+      partGauche: pg,
+      dosAppuye: aDos ? appuye : null,
+      mouvement: mouvement,
+      immobileMs: estAssis ? tempsActuel - dernierMouvement : 0,
+    });
+  }
 }
 
 // ---------- État initial : silhouette « vide » et légende ----------

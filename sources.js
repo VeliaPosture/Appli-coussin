@@ -96,10 +96,23 @@ $("btnDemo").onclick = () => {
 
   let etape = 0, tempsEtape = 0;
   let actuelles = [0, 0, 0];
-  let tempsSimule = Date.now();
+  let tempsSimule = Date.now();          // l'horloge de la personne simulée
+  let derniereVerification = Date.now(); // l'horloge réelle
+  let reste = 0;                         // fraction de seconde simulée pas encore jouée
+
+  // Chrome ralentit les onglets en arrière-plan (parfois une vérification par minute).
+  // On calcule donc combien de secondes simulées auraient dû passer, et on les joue
+  // toutes d'un coup : la démo peut tourner des heures sans qu'on la regarde.
+  const verifier = () => {
+    const maintenant = Date.now();
+    reste += (maintenant - derniereVerification) / 1000 * Number($("vitesse").value);
+    derniereVerification = maintenant;
+    const aJouer = Math.min(Math.floor(reste), 7200);   // au plus 2 h simulées d'un coup
+    reste -= Math.floor(reste);
+    for (let k = 0; k < aJouer; k++) tic();
+  };
 
   const tic = () => {
-    const vitesse = Number($("vitesse").value);
     let [duree, description, cible] = SCENARIO_DEMO[etape];
 
     // Pendant une calibration, la personne simulée suit les consignes
@@ -121,11 +134,10 @@ $("btnDemo").onclick = () => {
       tempsEtape = 0;
       etape = (etape + 1) % SCENARIO_DEMO.length;
     }
-    minuterie = setTimeout(tic, 1000 / vitesse);
   };
 
-  let minuterie = null;
-  changerSource("demo", () => clearTimeout(minuterie), "Mode démo");
+  const minuterie = setInterval(verifier, 250);
+  changerSource("demo", () => clearInterval(minuterie), "Mode démo");
   tic();
 };
 

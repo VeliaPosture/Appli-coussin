@@ -101,11 +101,54 @@
       <div class="petit"><span id="infoCalib">Pas encore calibré</span></div>
     </div>
   </div>
+
+  <!-- ============ MA JOURNÉE (résumé, voir journee.js) ============ -->
+  <section class="carte" id="journee">
+    <div class="journee-entete">
+      <button id="jourPrecedent" aria-label="Jour précédent">‹</button>
+      <div class="journee-titre">
+        <div id="titreJournee">Ma journée</div>
+        <div class="petit-texte" id="sousTitreJournee"></div>
+        <span class="badge" id="badgeDemo" hidden>Données de démo</span>
+      </div>
+      <button id="jourSuivant" aria-label="Jour suivant">›</button>
+    </div>
+
+    <div class="phrase" id="phraseJournee"></div>
+
+    <div id="contenuJournee" hidden>
+      <div class="bloc">
+        <div class="titre-bloc">Côté où tu appuies</div>
+        <div class="bande" id="bandeCote"></div>
+        <div class="legende-bande" id="legendeCote"></div>
+      </div>
+
+      <div class="bloc" id="blocDos">
+        <div class="titre-bloc">Dos</div>
+        <div class="bande" id="bandeDos"></div>
+      </div>
+
+      <div class="bloc">
+        <div class="titre-bloc">Ma journée heure par heure</div>
+        <div class="bande" id="bandeHeures"></div>
+        <div class="petit" id="heuresEtiquettes"></div>
+      </div>
+
+      <div class="chiffres">
+        <div><div class="petit-texte">Assis</div><div class="chiffre" id="statAssis">--</div></div>
+        <div><div class="petit-texte">Mouvements</div><div class="chiffre" id="statMouvements">--</div></div>
+        <div><div class="petit-texte">Plus long immobile</div><div class="chiffre" id="statImmobile">--</div></div>
+      </div>
+    </div>
+
+    <button id="btnEffacerDemo" hidden>Effacer les données de démo</button>
+  </section>
 </main>
 
-<!-- L'ordre compte : config, puis la logique, puis les sources de données -->
+<!-- L'ordre compte : config, la logique, le résumé, puis les sources de données -->
 <script src="config.js"></script>
 <script src="app.js"></script>
+<script src="journee.js"></script>
 <script src="sources.js"></script>
 </body>
 </html>

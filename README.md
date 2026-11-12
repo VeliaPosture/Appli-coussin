@@ -16,6 +16,8 @@ Application web qui se connecte au coussin par Bluetooth, le calibre et affiche 
 
 Tu peux aussi tester la **calibration** en mode démo : la personne simulée suit les consignes.
 
+Plus bas, la section **Ma journée** résume chaque journée : côté où on appuie, dos, heure par heure, mouvements et plus longue période immobile. Les données de la démo et de la relecture sont gardées **séparément** des vraies journées (badge « Données de démo »), et un bouton permet de les effacer. La démo peut tourner des heures sans surveillance, même si l'onglet est en arrière-plan ; l'ordinateur ne doit simplement pas se mettre en veille.
+
 ---
 
 ## 2. Les fichiers : qui touche à quoi
@@ -26,6 +28,7 @@ Tu peux aussi tester la **calibration** en mode démo : la personne simulée sui
 | `style.css` | L'apparence : couleurs, polices, tailles, espacements | Équipe design |
 | `config.js` | Les réglages : textes affichés, couleurs de pression, seuils, branchement des capteurs | Équipe (textes et couleurs) ; Vincent (sections ⚠️) |
 | `app.js` | La logique : calibration, calculs, mise à jour de l'affichage | Programmeurs |
+| `journee.js` | Le résumé « Ma journée » : comptage par jour, bandes, phrase résumé | Programmeurs |
 | `sources.js` | D'où viennent les données : Bluetooth, démo, enregistrement, relecture | Vincent |
 | `exemple_session.csv` | Une session enregistrée pour les tests | — |
 
@@ -47,6 +50,9 @@ Tu peux aussi tester la **calibration** en mode démo : la personne simulée sui
 | Ajouter une image (logo, etc.) | `index.html` | Place l'image dans le dossier, puis `<img src="logo.png" alt="Logo">` |
 | La mise en page sur téléphone | `style.css` | Les règles `@media (max-width: 640px)` |
 | Le scénario du mode démo | `sources.js` | `SCENARIO_DEMO` |
+| Les couleurs des bandes de « Ma journée » | `config.js` | `COULEURS_JOURNEE` |
+| La phrase résumé de la journée | `config.js` | `TEXTES` (`resumeGauche`, `resumeDroite`, `resumeCentre`) |
+| Le seuil « appuyé d'un côté » (55 %) | `config.js` | `SEUIL_COTE` |
 
 ---
 
@@ -56,7 +62,7 @@ Le JavaScript retrouve les éléments de la page par leur **`id`**. Tu peux dép
 
 1. **Ne renomme pas et ne supprime pas les `id`** comme `btnConnecter`, `btnDemo`, `btnCalibrer`, `presence`, `immobile`, `curseur`, `dos`, etc.
 2. **Sur la silhouette**, chaque zone de capteur doit garder son `id` : `z_FG`, `z_FD`, `z_CG`, `z_CD`, `z_DOS_G`, `z_DOS_D` (la forme), et `t_FG`, `t_FD`, etc. (le pourcentage). Tu peux changer leur forme, leur taille et leur position.
-3. **Garde l'ordre des scripts** à la fin de `index.html` : `config.js`, puis `app.js`, puis `sources.js`.
+3. **Garde l'ordre des scripts** à la fin de `index.html` : `config.js`, `app.js`, `journee.js`, puis `sources.js`.
 4. **Ne modifie pas les sections ⚠️ de `config.js`** sans en parler à Vincent : elles doivent correspondre au programme de l'ESP32.
 5. **Après chaque modification, teste en mode démo** : si quelque chose ne bouge plus, appuie sur **F12** dans Chrome et regarde l'onglet **Console** pour voir l'erreur en rouge.
 
