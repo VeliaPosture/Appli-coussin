@@ -4,6 +4,7 @@
 // Point d'entrée : traiter(valeurs, tempsMs), appelé par sources.js
 // chaque fois qu'une mesure arrive (Bluetooth, démo ou relecture).
 // =====================================================================
+// hola mi amiga
 
 const $ = id => document.getElementById(id);
 const zones = Object.keys(INDEX);
