@@ -85,6 +85,7 @@ const SCENARIO_DEMO = [
   [60,   "absent",                      [0, 0, 0]],
   [240,  "assis, adossé",               [2600, 2500, 2400]],
   [120,  "penché à gauche",             [3300, 1500, 2600]],
+  [20,   "debout 20 s (trop court pour une pause)", [0, 0, 0]],
   [300,  "assis, adossé",               [2600, 2500, 2400]],
   [1500, "immobile, adossé (25 min)",   [2600, 2500, 2400]],   // au moins une tranche de 15 min ratée
   [180,  "penché à droite",             [1600, 3200, 1200]],

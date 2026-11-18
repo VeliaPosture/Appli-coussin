@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Nunito+Sans:wght@400;600&display=swap">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 
@@ -196,11 +196,60 @@
        ONGLET 3 : SE LEVER (construit à l'étape 3)
        =================================================================== -->
   <section class="onglet" id="onglet-lever" role="tabpanel" hidden>
-    <div class="carte a-venir">
-      <img src="images/symbole-velia.png" alt="" class="a-venir-symbole">
-      <div class="invitation-titre">Se lever, bientôt ici</div>
-      <div class="petit-texte">Tes pauses debout, ton objectif d'une pause par heure et tes plus longues périodes assis apparaîtront dans cet onglet.</div>
+    <!-- En ce moment : depuis combien de temps on est assis -->
+    <div class="carte maintenant" id="carteMaintenant">
+      <div class="petit-texte">En ce moment</div>
+      <div class="maintenant-ligne">
+        <div class="grand-chiffre" id="assisDepuis">--</div>
+        <div class="petit-texte" id="assisDepuisLegende">assis sans pause</div>
+      </div>
+      <div class="progression"><div id="progressionLever"></div></div>
+      <div class="maintenant-message" id="messageLever"></div>
     </div>
+
+    <!-- Navigation entre les jours (la même que l'onglet Posture) -->
+    <section class="carte">
+      <div class="journee-entete">
+        <button class="nav-precedent" aria-label="Jour précédent">‹</button>
+        <div class="journee-titre">
+          <div class="titre-jour" id="titreLever">Ma journée</div>
+          <div class="petit-texte" id="sousTitreLever"></div>
+          <span class="badge badge-demo" hidden>Données de démo</span>
+        </div>
+        <button class="nav-suivant" aria-label="Jour suivant">›</button>
+      </div>
+    </section>
+
+    <div id="contenuLever" hidden>
+      <div class="grille">
+        <div class="carte objectif">
+          <div class="anneau" id="anneauLever"></div>
+          <div>
+            <div class="objectif-titre">Pauses debout</div>
+            <div class="petit-texte" id="objectifLeverTexte"></div>
+          </div>
+        </div>
+        <div class="carte">
+          <div class="chiffres deux">
+            <div><div class="petit-texte">Entre 2 pauses</div><div class="chiffre" id="statEntrePauses">--</div></div>
+            <div><div class="petit-texte">Plus long assis</div><div class="chiffre" id="statPlusLongAssis">--</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="carte conseil">
+        <img src="images/symbole-velia.png" alt="" class="conseil-symbole">
+        <div id="conseilLever"></div>
+      </div>
+
+      <div class="carte">
+        <div class="titre-section">Heure par heure</div>
+        <div class="bande" id="bandeLever"></div>
+        <div class="petit" id="leverEtiquettes"></div>
+        <div class="legende-bande" id="legendeLever"></div>
+      </div>
+    </div>
+    <div class="carte petit-texte" id="aucuneDonneeLever" hidden>Aucune donnée pour cette journée.</div>
   </section>
 
   <!-- ===================================================================
@@ -248,12 +297,12 @@
 </main>
 
 <!-- L'ordre compte : config, les dessins, la logique, le résumé, les onglets, puis les sources de données.
-     Le « ?v=5 » force Chrome à recharger les fichiers : augmente ce numéro à chaque mise à jour. -->
-<script src="config.js?v=5"></script>
-<script src="dessins.js?v=5"></script>
-<script src="app.js?v=5"></script>
-<script src="journee.js?v=5"></script>
-<script src="onglets.js?v=5"></script>
-<script src="sources.js?v=5"></script>
+     Le « ?v=6 » force Chrome à recharger les fichiers : augmente ce numéro à chaque mise à jour. -->
+<script src="config.js?v=6"></script>
+<script src="dessins.js?v=6"></script>
+<script src="app.js?v=6"></script>
+<script src="journee.js?v=6"></script>
+<script src="onglets.js?v=6"></script>
+<script src="sources.js?v=6"></script>
 </body>
 </html>

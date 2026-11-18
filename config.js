@@ -60,6 +60,8 @@ const DISTANCE_MIN_POSTURES = 0.2;      // deux postures plus proches que ça «
 
 // Objectifs (réglables dans l'onglet Réglages à l'étape 4)
 const OBJECTIF_POSITION_MIN = 15;   // changer de position au moins toutes les 15 minutes
+const OBJECTIF_LEVER_MIN = 60;      // se lever au moins une fois par heure assise
+const DUREE_MIN_PAUSE_S = 60;       // il faut rester debout au moins 60 s pour que ça compte comme une pause
 
 // Résumé de la journée
 const JOURS_CONSERVES = 60;     // nombre de jours gardés dans le navigateur
@@ -70,6 +72,8 @@ const COULEURS_JOURNEE = {
   dosAppuye: "#6F9E85",
   dosDecolle: "#D9C9B6",
   absent: "#F3E6D8",
+  pausePrise: "#6F9E85",   // onglet Se lever : heure avec une pause
+  sansPause: "#C9848B",    // onglet Se lever : heure assise sans pause
 };
 
 // Couleurs de la pression sur la silhouette : [niveau, couleur]
@@ -108,6 +112,19 @@ const TEXTES = {
   conseilBouger: "Tu restes souvent plus de {min} minutes dans la même position. Change un peu de position de temps en temps : ton dos te remerciera.",
   conseilHeure: "Tu as tendance à être {nom} vers {h} h. Un petit rappel à ce moment-là pourrait t'aider.",
   conseilHabitude: "Ta principale habitude aujourd'hui : {nom}. Essaie de te recentrer quand tu y penses.",
+
+  // Onglet « Se lever »
+  titreTitrePauses: "Pauses debout",
+  objectifLever: "Objectif : 1 pause toutes les {min} min",
+  leverDebout: "Tu es debout. Profites-en pour t'étirer !",
+  leverPasAssis: "Assieds-toi sur le coussin pour démarrer le chronomètre.",
+  leverBientot: "Prochaine pause conseillée dans {min} min",
+  leverMaintenant: "C'est le moment de te lever quelques minutes !",
+  leverDepasse: "Tu es assis depuis plus de {min} min : lève-toi, ton dos t'attend !",
+  conseilLeverBravo: "Objectif atteint ! Tes pauses régulières font du bien à ton dos et à ta concentration.",
+  conseilLeverPresque: "Plus que {n} pause(s) pour atteindre ton objectif aujourd'hui.",
+  conseilLeverLong: "Ta plus longue période assise a duré {duree}. Essaie de ne pas dépasser {min} min sans te lever.",
+  conseilLeverDebut: "Lève-toi au moins une fois par heure : c'est une des meilleures habitudes pour ton dos.",
   aucuneDonnee: "Aucune donnée pour cette journée.",
   resumeGauche: "Tu as passé {pct} % de ton temps assis appuyé sur la fesse gauche.",
   resumeDroite: "Tu as passé {pct} % de ton temps assis appuyé sur la fesse droite.",

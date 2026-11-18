@@ -16,6 +16,8 @@ let derniersMouvementsComptes = { reel: 0, demo: 0 };
 // Tranche de temps assis en cours : réussie si on a bougé ou changé de posture pendant la tranche
 let tranches = { reel: { temps: 0, bouge: false }, demo: { temps: 0, bouge: false } };
 let dernieresPostures = { reel: null, demo: null };
+// Période assise en cours (d'une pause à la suivante) : durée assise, et depuis quand on est debout
+let periodes = { reel: { duree: 0, debout: null, active: false }, demo: { duree: 0, debout: null, active: false } };
 let derniereSauvegarde = 0;
 let affichagePrevu = false;
 
@@ -50,6 +52,36 @@ function statsVides() {
 // =====================================================================
 // 1. COMPTAGE
 // =====================================================================
+// Compteurs du jour (s) et de l'heure (h) qui correspondent à un instant
+function compteurs(m, temps) {
+  const jour = cleJour(temps);
+  const heure = new Date(temps).getHours();
+  const s = journal[m][jour] || (journal[m][jour] = statsVides());
+  const h = s.heures[heure] || (s.heures[heure] = { assis: 0, gauche: 0, centre: 0, droite: 0 });
+  return [s, h];
+}
+
+// Pauses : une pause compte quand on reste debout au moins DUREE_MIN_PAUSE_S
+function compterPause(m, info, dt) {
+  const p = periodes[m];
+  if (info.assis) {
+    p.debout = null;
+    p.active = true;
+    p.duree += dt;
+    const [s] = compteurs(m, info.temps);
+    s.periodeMax = Math.max(s.periodeMax || 0, p.duree);
+  } else if (p.active) {
+    if (p.debout === null) p.debout = info.temps;
+    else if (info.temps - p.debout >= DUREE_MIN_PAUSE_S * 1000) {
+      const [s, h] = compteurs(m, p.debout);        // la pause compte à l'heure où on s'est levé
+      s.pauses = (s.pauses || 0) + 1;
+      h.pauses = (h.pauses || 0) + 1;
+      s.periodesTotal = (s.periodesTotal || 0) + p.duree;
+      s.periodesNombre = (s.periodesNombre || 0) + 1;
+      periodes[m] = { duree: 0, debout: null, active: false };
+    }
+  }
+}
 function compterJournee(info) {
   const m = magasinCourant();
 
@@ -57,16 +89,14 @@ function compterJournee(info) {
   const precedent = derniersTemps[m];
   derniersTemps[m] = info.temps;
   const dt = precedent === null ? 1 : Math.min(Math.max(info.temps - precedent, 0), 5000) / 1000;
+  compterPause(m, info, dt);
   if (!info.assis) {                         // debout : la tranche en cours repart à zéro
     tranches[m] = { temps: 0, bouge: false };
     dernieresPostures[m] = null;
   }
   if (!info.assis || dt === 0) { prevoirAffichage(); return; }
 
-  const jour = cleJour(info.temps);
-  const heure = new Date(info.temps).getHours();
-  const s = journal[m][jour] || (journal[m][jour] = statsVides());
-  const h = s.heures[heure] || (s.heures[heure] = { assis: 0, gauche: 0, centre: 0, droite: 0 });
+  const [s, h] = compteurs(m, info.temps);
 
   s.assis += dt;
   h.assis += dt;
@@ -167,6 +197,11 @@ function pctBonnePosture(s) {
 }
 
 function afficherJournee() {
+  afficherPosture();
+  afficherLever();
+}
+
+function afficherPosture() {
   const m = magasinCourant();
   const jours = Object.keys(journal[m]).sort();
   const jour = (jourAffiche && journal[m][jourAffiche]) ? jourAffiche : jours[jours.length - 1];
@@ -316,9 +351,99 @@ function choisirConseil(s, taux, pctBonne, mauvaises) {
   return TEXTES.conseilBravo;
 }
 
+
+// =====================================================================
+// 3. ONGLET « SE LEVER »
+// =====================================================================
+function afficherLever() {
+  const m = magasinCourant();
+  const jours = Object.keys(journal[m]).sort();
+  const jour = (jourAffiche && journal[m][jourAffiche]) ? jourAffiche : jours[jours.length - 1];
+  const s = jour ? journal[m][jour] : null;
+  const index = jours.indexOf(jour);
+  const objectifS = OBJECTIF_LEVER_MIN * 60;
+
+  // ---------- En ce moment ----------
+  const p = periodes[m];
+  const actif = typeof sourceActive === "function" && sourceActive();
+  const assis = actif && p.active && p.debout === null;
+  $("carteMaintenant").hidden = jourAffiche !== null;          // seulement pour la journée en cours
+  $("assisDepuis").textContent = assis ? duree(p.duree) : "--";
+  $("assisDepuisLegende").textContent = assis ? "assis sans pause" : "";
+  const ratio = assis ? p.duree / objectifS : 0;
+  $("progressionLever").style.width = Math.min(100, ratio * 100) + "%";
+  $("progressionLever").className = ratio >= 1 ? "depasse" : "";
+  let message;
+  if (!actif) message = TEXTES.leverPasAssis;
+  else if (!assis) message = TEXTES.leverDebout;
+  else if (ratio < 1) message = TEXTES.leverBientot.replace("{min}", Math.max(1, Math.ceil((objectifS - p.duree) / 60)));
+  else if (ratio < 1.25) message = TEXTES.leverMaintenant;
+  else message = TEXTES.leverDepasse.replace("{min}", OBJECTIF_LEVER_MIN);
+  $("messageLever").textContent = message;
+  $("messageLever").className = "maintenant-message" + (ratio >= 1 ? " alerte" : "");
+
+  // ---------- En-tête du jour (même navigation que l'onglet Posture) ----------
+  document.querySelectorAll(".badge-demo").forEach(b => b.hidden = m !== "demo");
+  document.querySelectorAll(".nav-precedent").forEach(b => b.disabled = index <= 0);
+  document.querySelectorAll(".nav-suivant").forEach(b => b.disabled = index < 0 || index >= jours.length - 1);
+  $("titreLever").textContent = $("titreJournee").textContent;
+
+  if (!s || s.assis < 1) {
+    $("sousTitreLever").textContent = "";
+    $("contenuLever").hidden = true;
+    $("aucuneDonneeLever").hidden = false;
+    return;
+  }
+  $("contenuLever").hidden = false;
+  $("aucuneDonneeLever").hidden = true;
+
+  // ---------- Objectif : pauses par heure assise ----------
+  const pauses = s.pauses || 0;
+  const objectif = Math.max(1, Math.round(s.assis / objectifS));
+  $("sousTitreLever").textContent = duree(s.assis) + " assis · " + pauses + (pauses > 1 ? " pauses" : " pause");
+  $("anneauLever").innerHTML = anneau(pourcent(pauses, objectif),
+    pauses >= objectif ? POSTURES[0].couleur : "#F28C2E", pauses + " / " + objectif);
+  $("objectifLeverTexte").textContent = TEXTES.objectifLever.replace("{min}", OBJECTIF_LEVER_MIN);
+
+  // ---------- Chiffres ----------
+  $("statEntrePauses").textContent = s.periodesNombre ? duree(s.periodesTotal / s.periodesNombre) : "--";
+  $("statPlusLongAssis").textContent = duree(s.periodeMax || 0);
+  $("statPlusLongAssis").className = "chiffre" + ((s.periodeMax || 0) > objectifS ? " baisse" : "");
+
+  // ---------- Conseil ----------
+  let conseil;
+  if (pauses >= objectif) conseil = TEXTES.conseilLeverBravo;
+  else if ((s.periodeMax || 0) > objectifS * 1.25) {
+    conseil = TEXTES.conseilLeverLong.replace("{duree}", duree(s.periodeMax)).replace("{min}", OBJECTIF_LEVER_MIN);
+  } else conseil = TEXTES.conseilLeverPresque.replace("{n}", objectif - pauses);
+  $("conseilLever").textContent = conseil;
+
+  // ---------- Heure par heure ----------
+  const C = COULEURS_JOURNEE;
+  const heures = Object.keys(s.heures).map(Number);
+  const debut = Math.min(8, ...heures), fin = Math.max(17, ...heures);
+  let html = "";
+  for (let h = debut; h <= fin; h++) {
+    const hh = s.heures[h];
+    let couleur = C.absent, nom = "absent";
+    if (hh && hh.pauses) { couleur = C.pausePrise; nom = "pause prise"; }
+    else if (hh && hh.assis >= 1800) { couleur = C.sansPause; nom = "assis, sans pause"; }
+    else if (hh && hh.assis >= 180) { couleur = C.centre; nom = "un peu assis"; }
+    html += `<div style="flex:1;background:${couleur}" title="${h} h : ${nom}"></div>`;
+  }
+  $("bandeLever").innerHTML = html;
+  $("leverEtiquettes").innerHTML = `<span>${debut} h</span><span>${Math.round((debut + fin) / 2)} h</span><span>${fin + 1} h</span>`;
+  $("legendeLever").innerHTML =
+    `<span><i style="background:${C.pausePrise}"></i>Pause prise</span>` +
+    `<span><i style="background:${C.sansPause}"></i>30 min ou plus sans pause</span>` +
+    `<span><i style="background:${C.absent}"></i>Absent</span>`;
+}
+
 // ---------- Navigation et bouton ----------
 $("jourPrecedent").onclick = () => naviguer(-1);
 $("jourSuivant").onclick = () => naviguer(+1);
+document.querySelectorAll(".nav-precedent").forEach(b => b.onclick = () => naviguer(-1));
+document.querySelectorAll(".nav-suivant").forEach(b => b.onclick = () => naviguer(+1));
 function naviguer(sens) {
   const jours = Object.keys(journal[magasinCourant()]).sort();
   const actuel = (jourAffiche && jours.includes(jourAffiche)) ? jourAffiche : jours[jours.length - 1];
@@ -331,6 +456,7 @@ $("btnEffacerDemo").onclick = () => {
   journal.demo = {};
   derniersTemps.demo = null;
   tranches.demo = { temps: 0, bouge: false };
+  periodes.demo = { duree: 0, debout: null, active: false };
   dernieresPostures.demo = null;
   jourAffiche = null;
   sauverJournal();

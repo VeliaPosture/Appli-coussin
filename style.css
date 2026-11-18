@@ -206,3 +206,15 @@ svg { width: 100%; height: auto; display: block; }
   background: #EEF4F0; color: #3D5F4D; box-shadow: none;
 }
 .conseil-symbole { height: 40px; width: auto; flex-shrink: 0; }
+
+/* ---------- Tableau de bord Se lever ---------- */
+.maintenant { background: var(--carte); }
+.maintenant-ligne { display: flex; align-items: baseline; gap: 10px; margin: 2px 0 10px; }
+.grand-chiffre { font-family: var(--police-titres); font-size: 2.2em; font-weight: 500; color: var(--marque); }
+.progression { height: 12px; background: var(--sable); border-radius: 6px; overflow: hidden; }
+#progressionLever { height: 100%; width: 0; background: var(--marque-vive); border-radius: 6px; transition: width .5s, background .3s; }
+#progressionLever.depasse { background: var(--rose); }
+.maintenant-message { margin-top: 10px; font-size: .95em; }
+.maintenant-message.alerte { color: var(--rose); font-weight: 600; }
+.titre-jour { font-family: var(--police-titres); font-weight: 500; font-size: 1.1em; }
+.chiffres.deux { grid-template-columns: repeat(2, minmax(0, 1fr)); height: 100%; align-content: center; }
