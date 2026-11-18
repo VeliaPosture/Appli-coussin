@@ -79,16 +79,20 @@ $("btnConnecter").onclick = async () => {
 // 2. MODE DÉMO (personne simulée)
 // =====================================================================
 // Scénario en boucle : [durée en secondes, description, valeurs brutes FG, FD, DOS_G]
+// Une journée de bureau réaliste d'environ 1 heure, qui recommence en boucle.
+// Astuce : mets la vitesse à ×20 pour la voir défiler en moins de 3 minutes.
 const SCENARIO_DEMO = [
-  [6,  "absent",              [0, 0, 0]],
-  [20, "assis, adossé",       [2600, 2500, 2400]],
-  [12, "penché à gauche",     [3300, 1500, 2600]],
-  [12, "assis, adossé",       [2600, 2500, 2400]],
-  [12, "penché à droite",     [1600, 3200, 1200]],
-  [15, "penché vers l'avant", [2300, 2200, 0]],
-  [25, "immobile, adossé",    [2600, 2500, 2400]],
-  [8,  "se tortille",         null],               // null = mouvements au hasard
-  [6,  "absent (pause)",      [0, 0, 0]],
+  [60,   "absent",                      [0, 0, 0]],
+  [240,  "assis, adossé",               [2600, 2500, 2400]],
+  [120,  "penché à gauche",             [3300, 1500, 2600]],
+  [300,  "assis, adossé",               [2600, 2500, 2400]],
+  [1500, "immobile, adossé (25 min)",   [2600, 2500, 2400]],   // au moins une tranche de 15 min ratée
+  [180,  "penché à droite",             [1600, 3200, 1200]],
+  [120,  "penché vers l'avant",         [2300, 2200, 0]],
+  [30,   "se tortille",                 null],                 // null = mouvements au hasard
+  [600,  "assis, adossé",               [2600, 2500, 2400]],
+  [300,  "penché à droite",             [1600, 3200, 1200]],
+  [180,  "pause debout",                [0, 0, 0]],
 ];
 
 $("btnDemo").onclick = () => {

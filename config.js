@@ -58,6 +58,9 @@ const DUREE_MESURE_POSTURE = 8;         // secondes de mesure par posture
 const DUREE_CONFIRMATION_POSTURE = 3000; // ms : une posture doit durer 3 s avant d'être affichée
 const DISTANCE_MIN_POSTURES = 0.2;      // deux postures plus proches que ça « se ressemblent »
 
+// Objectifs (réglables dans l'onglet Réglages à l'étape 4)
+const OBJECTIF_POSITION_MIN = 15;   // changer de position au moins toutes les 15 minutes
+
 // Résumé de la journée
 const JOURS_CONSERVES = 60;     // nombre de jours gardés dans le navigateur
 const COULEURS_JOURNEE = {
@@ -93,6 +96,18 @@ const TEXTES = {
   resumePosture: "Tu étais en bonne posture {pct} % de ton temps assis.",
   resumeHabitude: " Ta principale habitude : {nom} ({pct} %).",
   resumeParfait: " Aucune mauvaise habitude détectée, bravo !",
+  titreBonnePosture: "Bonne posture",
+  titreChangerPosition: "Changer de position",
+  sousTitreChangerPosition: "Objectif : toutes les {min} min",
+  comparaisonPlus: "+{n} % par rapport à la journée précédente",
+  comparaisonMoins: "−{n} % par rapport à la journée précédente",
+  comparaisonEgal: "Comme la journée précédente",
+  comparaisonPremiere: "Ta première journée avec Vélia",
+  tranchesPasEncore: "Reste assis {min} min pour voir ton résultat",
+  conseilBravo: "Belle journée pour ton dos ! Continue de bouger régulièrement.",
+  conseilBouger: "Tu restes souvent plus de {min} minutes dans la même position. Change un peu de position de temps en temps : ton dos te remerciera.",
+  conseilHeure: "Tu as tendance à être {nom} vers {h} h. Un petit rappel à ce moment-là pourrait t'aider.",
+  conseilHabitude: "Ta principale habitude aujourd'hui : {nom}. Essaie de te recentrer quand tu y penses.",
   aucuneDonnee: "Aucune donnée pour cette journée.",
   resumeGauche: "Tu as passé {pct} % de ton temps assis appuyé sur la fesse gauche.",
   resumeDroite: "Tu as passé {pct} % de ton temps assis appuyé sur la fesse droite.",

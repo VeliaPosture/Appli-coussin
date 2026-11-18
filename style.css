@@ -55,7 +55,8 @@ main { max-width: 820px; margin: 0 auto; padding: 18px 16px 48px; }
 }
 
 /* Deux colonnes (silhouette | indicateurs), une seule sur téléphone */
-.grille { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.grille { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-bottom: 16px; }
+.grille > .carte { margin-bottom: 0; }
 @media (max-width: 640px) { .grille { grid-template-columns: minmax(0, 1fr); } }
 
 .titre-section { font-family: var(--police-titres); font-weight: 500; font-size: 1.05em; margin-bottom: 12px; }
@@ -189,4 +190,19 @@ svg { width: 100%; height: auto; display: block; }
 .chiffres { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .chiffres > div { background: var(--sable); border-radius: 12px; padding: 10px; text-align: center; }
 .chiffre { font-family: var(--police-titres); font-size: 1.25em; font-weight: 500; }
-#btnEffacerDemo { margin-top: 14px; font-size: .85em; }
+#btnEffacerDemo { font-size: .85em; }
+#journee .phrase { margin-bottom: 0; }
+
+/* ---------- Tableau de bord Posture : objectifs, anneaux, conseil ---------- */
+.objectif { display: flex; align-items: center; gap: 16px; }
+.anneau svg { width: 96px; height: 96px; flex-shrink: 0; }
+.anneau text { font-family: var(--police-titres); font-size: 18px; font-weight: 500; fill: var(--texte); }
+.objectif-titre { font-family: var(--police-titres); font-size: 1.15em; font-weight: 500; margin-bottom: 2px; }
+.hausse { color: var(--sauge); font-weight: 600; }
+.baisse { color: var(--rose); font-weight: 600; }
+
+.conseil {
+  display: flex; align-items: center; gap: 14px;
+  background: #EEF4F0; color: #3D5F4D; box-shadow: none;
+}
+.conseil-symbole { height: 40px; width: auto; flex-shrink: 0; }

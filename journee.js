@@ -13,6 +13,9 @@ let journal = chargerJournal();            // { reel: { "2026-11-11": stats }, d
 let jourAffiche = null;                    // jour affiché, ou null = le plus récent
 let derniersTemps = { reel: null, demo: null };
 let derniersMouvementsComptes = { reel: 0, demo: 0 };
+// Tranche de temps assis en cours : réussie si on a bougé ou changé de posture pendant la tranche
+let tranches = { reel: { temps: 0, bouge: false }, demo: { temps: 0, bouge: false } };
+let dernieresPostures = { reel: null, demo: null };
 let derniereSauvegarde = 0;
 let affichagePrevu = false;
 
@@ -54,6 +57,10 @@ function compterJournee(info) {
   const precedent = derniersTemps[m];
   derniersTemps[m] = info.temps;
   const dt = precedent === null ? 1 : Math.min(Math.max(info.temps - precedent, 0), 5000) / 1000;
+  if (!info.assis) {                         // debout : la tranche en cours repart à zéro
+    tranches[m] = { temps: 0, bouge: false };
+    dernieresPostures[m] = null;
+  }
   if (!info.assis || dt === 0) { prevoirAffichage(); return; }
 
   const jour = cleJour(info.temps);
@@ -90,6 +97,21 @@ function compterJournee(info) {
   }
   s.immobileMax = Math.max(s.immobileMax, info.immobileMs / 1000);
 
+  // Changement de posture (ex. bonne posture → penché à droite)
+  const changementPosture = info.posture && dernieresPostures[m] && info.posture !== dernieresPostures[m];
+  if (changementPosture) s.changementsPosture = (s.changementsPosture || 0) + 1;
+  if (info.posture) dernieresPostures[m] = info.posture;
+
+  // Tranches de OBJECTIF_POSITION_MIN minutes : réussie si on a bougé pendant la tranche
+  const t = tranches[m];
+  t.temps += dt;
+  if (info.mouvement || changementPosture) t.bouge = true;
+  if (t.temps >= OBJECTIF_POSITION_MIN * 60) {
+    s.tranches = (s.tranches || 0) + 1;
+    if (t.bouge) s.tranchesReussies = (s.tranchesReussies || 0) + 1;
+    tranches[m] = { temps: 0, bouge: false };
+  }
+
   nettoyerVieuxJours(m);
   if (Date.now() - derniereSauvegarde > 10000) sauverJournal();   // sauvegarde aux 10 s
   prevoirAffichage();
@@ -124,6 +146,26 @@ function segment(largeur, couleur, texte, texteFonce) {
   return `<div style="width:${largeur}%;background:${couleur};${texteFonce ? "color:#2c2c2a" : ""}">${etiquette}</div>`;
 }
 
+// Anneau de progression (SVG) : pct de 0 à 100
+function anneau(pct, couleur, texte) {
+  const r = 38, c = 2 * Math.PI * r;
+  const plein = Math.max(0, Math.min(100, pct)) / 100 * c;
+  return `<svg viewBox="0 0 96 96" role="img" aria-label="${texte}">
+    <circle cx="48" cy="48" r="${r}" fill="none" stroke="#F3E6D8" stroke-width="10"/>
+    <circle cx="48" cy="48" r="${r}" fill="none" stroke="${couleur}" stroke-width="10" stroke-linecap="round"
+            stroke-dasharray="${plein} ${c}" transform="rotate(-90 48 48)"/>
+    <text x="48" y="54" text-anchor="middle">${texte}</text>
+  </svg>`;
+}
+
+// Pourcentage du temps en bonne posture pour une journée (null si aucune posture)
+function pctBonnePosture(s) {
+  if (!s || !s.postures) return null;
+  const total = Object.values(s.postures).reduce((a, b) => a + b, 0);
+  if (total <= 0) return null;
+  return pourcent(POSTURES.filter(p => p.bonne).reduce((t, p) => t + (s.postures[p.id] || 0), 0), total);
+}
+
 function afficherJournee() {
   const m = magasinCourant();
   const jours = Object.keys(journal[m]).sort();
@@ -131,7 +173,7 @@ function afficherJournee() {
   const s = jour ? journal[m][jour] : null;
   const index = jours.indexOf(jour);
 
-  // En-tête
+  // ---------- En-tête ----------
   $("badgeDemo").hidden = m !== "demo";
   $("btnEffacerDemo").hidden = m !== "demo";
   $("jourPrecedent").disabled = index <= 0;
@@ -142,46 +184,74 @@ function afficherJournee() {
   if (!s || s.assis < 1) {
     $("sousTitreJournee").textContent = "";
     $("phraseJournee").textContent = TEXTES.aucuneDonnee;
+    $("phraseJournee").hidden = false;
     $("contenuJournee").hidden = true;
     return;
   }
   $("contenuJournee").hidden = false;
-  $("sousTitreJournee").textContent = duree(s.assis) + " assis · " + s.mouvements + " mouvements";
+  $("sousTitreJournee").textContent = duree(s.assis) + " assis";
 
   const C = COULEURS_JOURNEE;
   const totalCote = s.gauche + s.centre + s.droite;
   const parts = { gauche: pourcent(s.gauche, totalCote), centre: pourcent(s.centre, totalCote), droite: pourcent(s.droite, totalCote) };
-
-  // Postures : présentes seulement pour les journées enregistrées avec cette version
   const totalPostures = s.postures ? Object.values(s.postures).reduce((a, b) => a + b, 0) : 0;
   const avecPostures = totalPostures > 0;
-  $("blocPosture").hidden = !avecPostures;
-  $("blocCote").hidden = avecPostures;
+  const pct = id => pourcent((s.postures || {})[id] || 0, totalPostures);
+  const mauvaises = POSTURES.filter(p => !p.bonne && pct(p.id) > 0).sort((a, b) => pct(b.id) - pct(a.id));
 
+  // ---------- Objectif 1 : bonne posture ----------
+  const pctBonne = pctBonnePosture(s);
+  if (pctBonne !== null) {
+    $("anneauPosture").innerHTML = anneau(pctBonne, POSTURES[0].couleur, pctBonne + " %");
+    // Comparaison avec la journée précédente qui a des postures
+    let precedente = null;
+    for (let i = index - 1; i >= 0 && precedente === null; i--) precedente = pctBonnePosture(journal[m][jours[i]]);
+    const comp = $("comparaisonPosture");
+    if (precedente === null) { comp.textContent = TEXTES.comparaisonPremiere; comp.className = "petit-texte"; }
+    else {
+      const d = pctBonne - precedente;
+      comp.textContent = d > 0 ? TEXTES.comparaisonPlus.replace("{n}", d)
+                       : d < 0 ? TEXTES.comparaisonMoins.replace("{n}", -d) : TEXTES.comparaisonEgal;
+      comp.className = "petit-texte " + (d > 0 ? "hausse" : d < 0 ? "baisse" : "");
+    }
+  } else {
+    $("anneauPosture").innerHTML = anneau(0, POSTURES[0].couleur, "--");
+    $("comparaisonPosture").textContent = TEXTES.calibrationAncienne;
+  }
+
+  // ---------- Objectif 2 : changer de position ----------
+  const tr = s.tranches || 0, ok = s.tranchesReussies || 0;
+  const taux = tr > 0 ? pourcent(ok, tr) : null;
+  $("anneauPosition").innerHTML = anneau(taux || 0, "#F28C2E", taux === null ? "--" : taux + " %");
+  $("sousTitrePosition").textContent = taux === null
+    ? TEXTES.tranchesPasEncore.replace("{min}", OBJECTIF_POSITION_MIN)
+    : TEXTES.sousTitreChangerPosition.replace("{min}", OBJECTIF_POSITION_MIN);
+
+  // ---------- Phrase résumé ----------
   if (avecPostures) {
-    // Phrase : % du temps en bonne posture + principale mauvaise habitude
-    const pct = id => pourcent(s.postures[id] || 0, totalPostures);
-    const bonnes = POSTURES.filter(p => p.bonne);
-    const mauvaises = POSTURES.filter(p => !p.bonne && pct(p.id) > 0).sort((a, b) => pct(b.id) - pct(a.id));
-    const pctBonne = bonnes.reduce((somme, p) => somme + pct(p.id), 0);
     let phrase = TEXTES.resumePosture.replace("{pct}", pctBonne);
     phrase += mauvaises.length
       ? TEXTES.resumeHabitude.replace("{nom}", mauvaises[0].nom.toLowerCase()).replace("{pct}", pct(mauvaises[0].id))
       : TEXTES.resumeParfait;
     $("phraseJournee").textContent = phrase;
-
-    // Bande : une couleur par posture
-    $("bandePosture").innerHTML = POSTURES.map(p => segment(pct(p.id), p.couleur, pct(p.id) + " %")).join("");
-    $("legendePosture").innerHTML = POSTURES.map(p =>
-      `<span><i style="background:${p.couleur}"></i>${p.nom} ${pct(p.id)} %</span>`).join("");
   } else {
-    // Anciennes journées (sans postures) : phrase sur le côté dominant
     const dominant = Object.keys(parts).reduce((a, b) => parts[a] >= parts[b] ? a : b);
     const modele = { gauche: TEXTES.resumeGauche, centre: TEXTES.resumeCentre, droite: TEXTES.resumeDroite }[dominant];
     $("phraseJournee").textContent = modele.replace("{pct}", parts[dominant]);
   }
+  $("phraseJournee").hidden = false;
 
-  // Bande : côté (anciennes journées)
+  // ---------- Conseil du jour ----------
+  $("conseilJournee").textContent = choisirConseil(s, taux, pctBonne, mauvaises);
+
+  // ---------- Bandes ----------
+  $("blocPosture").hidden = !avecPostures;
+  $("blocCote").hidden = avecPostures;
+  if (avecPostures) {
+    $("bandePosture").innerHTML = POSTURES.map(p => segment(pct(p.id), p.couleur, pct(p.id) + " %")).join("");
+    $("legendePosture").innerHTML = POSTURES.map(p =>
+      `<span><i style="background:${p.couleur}"></i>${p.nom} ${pct(p.id)} %</span>`).join("");
+  }
   $("bandeCote").innerHTML =
     segment(parts.gauche, C.gauche, parts.gauche + " %") +
     segment(parts.centre, C.centre, parts.centre + " %", true) +
@@ -191,7 +261,6 @@ function afficherJournee() {
     `<span><i style="background:${C.centre}"></i>Centré ${parts.centre} %</span>` +
     `<span><i style="background:${C.droite}"></i>Droite ${parts.droite} %</span>`;
 
-  // Bande : dos
   const totalDos = s.dosAppuye + s.dosDecolle;
   $("blocDos").hidden = totalDos === 0;
   const pA = pourcent(s.dosAppuye, totalDos);
@@ -199,7 +268,7 @@ function afficherJournee() {
     segment(pA, C.dosAppuye, "Appuyé " + pA + " %") +
     segment(100 - pA, C.dosDecolle, "Décollé " + (100 - pA) + " %", true);
 
-  // Bande : heure par heure (couleur = posture, ou côté, dominant pendant l'heure)
+  // Heure par heure (couleur = posture, ou côté, dominant pendant l'heure)
   const heures = Object.keys(s.heures).map(Number);
   const debut = Math.min(8, ...heures), fin = Math.max(17, ...heures);
   let html = "";
@@ -221,10 +290,30 @@ function afficherJournee() {
   const milieu = Math.round((debut + fin) / 2);
   $("heuresEtiquettes").innerHTML = `<span>${debut} h</span><span>${milieu} h</span><span>${fin + 1} h</span>`;
 
-  // Chiffres clés
+  // ---------- Chiffres clés ----------
   $("statAssis").textContent = duree(s.assis);
-  $("statMouvements").textContent = s.mouvements;
+  $("statChangements").textContent = s.changementsPosture || 0;
   $("statImmobile").textContent = duree(s.immobileMax);
+}
+
+// Un seul conseil, le plus utile : bouger, puis l'heure difficile, puis l'habitude, sinon bravo
+function choisirConseil(s, taux, pctBonne, mauvaises) {
+  if (taux !== null && taux < 60) return TEXTES.conseilBouger.replace("{min}", OBJECTIF_POSITION_MIN);
+  if (mauvaises.length && pctBonne !== null && pctBonne < 80) {
+    // Heure où la principale mauvaise habitude est la plus présente (au moins 10 min assis)
+    const habitude = mauvaises[0];
+    let meilleure = null, part = 0;
+    for (const [h, hh] of Object.entries(s.heures)) {
+      if (!hh.postures || hh.assis < 600) continue;
+      const p = (hh.postures[habitude.id] || 0) / hh.assis;
+      if (p > part) { part = p; meilleure = h; }
+    }
+    if (meilleure !== null && part >= 0.3) {
+      return TEXTES.conseilHeure.replace("{nom}", habitude.nom.toLowerCase()).replace("{h}", meilleure);
+    }
+    return TEXTES.conseilHabitude.replace("{nom}", habitude.nom.toLowerCase());
+  }
+  return TEXTES.conseilBravo;
 }
 
 // ---------- Navigation et bouton ----------
@@ -241,6 +330,8 @@ function naviguer(sens) {
 $("btnEffacerDemo").onclick = () => {
   journal.demo = {};
   derniersTemps.demo = null;
+  tranches.demo = { temps: 0, bouge: false };
+  dernieresPostures.demo = null;
   jourAffiche = null;
   sauverJournal();
   afficherJournee();

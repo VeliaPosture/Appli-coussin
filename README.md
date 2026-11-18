@@ -18,7 +18,7 @@ Tu peux aussi tester la **calibration** en mode démo : la personne simulée sui
 
 La **calibration** se fait en plusieurs positions, chacune illustrée par un petit dessin : coussin vide, puis chaque posture de la liste `POSTURES` (bonne posture, penché à gauche, penché à droite). L'application garde la « signature » de chaque posture et reconnaît ensuite en direct **la plus ressemblante** (carte « Posture », en vert pour la bonne posture). Une posture qui n'a pas été apprise (ex. penché vers l'avant) est classée dans la plus proche : ajoute-la à `POSTURES` pour qu'elle soit reconnue.
 
-Plus bas, la section **Ma journée** résume chaque journée : côté où on appuie, dos, heure par heure, mouvements et plus longue période immobile. Les données de la démo et de la relecture sont gardées **séparément** des vraies journées (badge « Données de démo »), et un bouton permet de les effacer. La démo peut tourner des heures sans surveillance, même si l'onglet est en arrière-plan ; l'ordinateur ne doit simplement pas se mettre en veille.
+L'onglet **Posture** résume chaque journée avec deux objectifs : le **% du temps en bonne posture** (comparé à la journée précédente) et le **taux de réussite des changements de position** (le temps assis est découpé en tranches de 15 minutes ; une tranche est réussie si on a bougé ou changé de posture pendant la tranche). Un **conseil du jour** s'affiche selon tes résultats. Plus bas, la section **Ma journée** résume chaque journée : côté où on appuie, dos, heure par heure, mouvements et plus longue période immobile. Les données de la démo et de la relecture sont gardées **séparément** des vraies journées (badge « Données de démo »), et un bouton permet de les effacer. La démo peut tourner des heures sans surveillance, même si l'onglet est en arrière-plan ; l'ordinateur ne doit simplement pas se mettre en veille.
 
 ---
 
@@ -56,6 +56,8 @@ Plus bas, la section **Ma journée** résume chaque journée : côté où on app
 | La forme de la silhouette | `index.html` | Dans le `<svg id="silhouette">` |
 | Ajouter une image (logo, etc.) | `index.html` | Place l'image dans le dossier, puis `<img src="logo.png" alt="Logo">` |
 | La mise en page sur téléphone | `style.css` | Les règles `@media (max-width: 640px)` |
+| Le délai pour changer de position (15 min) | `config.js` | `OBJECTIF_POSITION_MIN` |
+| Les conseils du jour et les phrases de comparaison | `config.js` | `TEXTES` (`conseil…`, `comparaison…`) |
 | Le scénario du mode démo | `sources.js` | `SCENARIO_DEMO` |
 | Les couleurs des bandes de « Ma journée » | `config.js` | `COULEURS_JOURNEE` |
 | La phrase résumé de la journée | `config.js` | `TEXTES` (`resumeGauche`, `resumeDroite`, `resumeCentre`) |

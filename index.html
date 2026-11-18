@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Nunito+Sans:wght@400;600&display=swap">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
@@ -128,8 +128,36 @@
       </div>
 
       <div class="phrase" id="phraseJournee"></div>
+    </section>
 
-      <div id="contenuJournee" hidden>
+    <div id="contenuJournee" hidden>
+      <!-- Les deux objectifs principaux -->
+      <div class="grille">
+        <div class="carte objectif">
+          <div class="anneau" id="anneauPosture"></div>
+          <div>
+            <div class="objectif-titre" id="titreBonnePosture">Bonne posture</div>
+            <div class="petit-texte" id="comparaisonPosture"></div>
+          </div>
+        </div>
+        <div class="carte objectif">
+          <div class="anneau" id="anneauPosition"></div>
+          <div>
+            <div class="objectif-titre" id="titreChangerPosition">Changer de position</div>
+            <div class="petit-texte" id="sousTitrePosition"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conseil du jour -->
+      <div class="carte conseil">
+        <img src="images/symbole-velia.png" alt="" class="conseil-symbole">
+        <div id="conseilJournee"></div>
+      </div>
+
+      <!-- Habitudes -->
+      <div class="carte">
+        <div class="titre-section">Tes habitudes</div>
         <div class="bloc" id="blocPosture">
           <div class="titre-bloc">Posture</div>
           <div class="bande" id="bandePosture"></div>
@@ -148,20 +176,20 @@
         </div>
 
         <div class="bloc">
-          <div class="titre-bloc">Ma journée heure par heure</div>
+          <div class="titre-bloc">Heure par heure</div>
           <div class="bande" id="bandeHeures"></div>
           <div class="petit" id="heuresEtiquettes"></div>
         </div>
 
         <div class="chiffres">
           <div><div class="petit-texte">Assis</div><div class="chiffre" id="statAssis">--</div></div>
-          <div><div class="petit-texte">Mouvements</div><div class="chiffre" id="statMouvements">--</div></div>
+          <div><div class="petit-texte">Changements de posture</div><div class="chiffre" id="statChangements">--</div></div>
           <div><div class="petit-texte">Plus long immobile</div><div class="chiffre" id="statImmobile">--</div></div>
         </div>
       </div>
+    </div>
 
-      <button id="btnEffacerDemo" hidden>Effacer les données de démo</button>
-    </section>
+    <button id="btnEffacerDemo" hidden>Effacer les données de démo</button>
   </section>
 
   <!-- ===================================================================
@@ -220,12 +248,12 @@
 </main>
 
 <!-- L'ordre compte : config, les dessins, la logique, le résumé, les onglets, puis les sources de données.
-     Le « ?v=4 » force Chrome à recharger les fichiers : augmente ce numéro à chaque mise à jour. -->
-<script src="config.js?v=4"></script>
-<script src="dessins.js?v=4"></script>
-<script src="app.js?v=4"></script>
-<script src="journee.js?v=4"></script>
-<script src="onglets.js?v=4"></script>
-<script src="sources.js?v=4"></script>
+     Le « ?v=5 » force Chrome à recharger les fichiers : augmente ce numéro à chaque mise à jour. -->
+<script src="config.js?v=5"></script>
+<script src="dessins.js?v=5"></script>
+<script src="app.js?v=5"></script>
+<script src="journee.js?v=5"></script>
+<script src="onglets.js?v=5"></script>
+<script src="sources.js?v=5"></script>
 </body>
 </html>
