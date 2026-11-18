@@ -34,6 +34,8 @@ L'onglet **Se lever** suit les pauses debout : une **pause** compte quand on res
 | `app.js` | La logique : calibration, calculs, mise à jour de l'affichage | Programmeurs |
 | `journee.js` | Le résumé « Ma journée » : comptage par jour, bandes, phrase résumé | Programmeurs |
 | `dessins.js` | Les petits dessins des postures (personne vue de dos sur une chaise) | Équipe design |
+| `reglages.js` | Les réglages de la personne : objectifs, prénom, notifications, vibration (gardés dans le navigateur) | Programmeurs |
+| `rappels.js` | Les rappels quand un objectif est dépassé : bannière, notification de l'ordinateur, vibration du coussin | Programmeurs |
 | `onglets.js` | La navigation entre les onglets (En direct, Posture, Se lever, Réglages) et la pastille de l'en-tête | Programmeurs |
 | `images/` | Le logo Vélia : `logo-velia.png` (complet), `symbole-velia.png` (en-tête), `favicon.png` (icône d'onglet) | Équipe design |
 | `sources.js` | D'où viennent les données : Bluetooth, démo, enregistrement, relecture | Vincent |
@@ -58,8 +60,10 @@ L'onglet **Se lever** suit les pauses debout : une **pause** compte quand on res
 | La forme de la silhouette | `index.html` | Dans le `<svg id="silhouette">` |
 | Ajouter une image (logo, etc.) | `index.html` | Place l'image dans le dossier, puis `<img src="logo.png" alt="Logo">` |
 | La mise en page sur téléphone | `style.css` | Les règles `@media (max-width: 640px)` |
-| Le délai pour changer de position (15 min) | `config.js` | `OBJECTIF_POSITION_MIN` |
-| L'objectif de pause (1 par heure) | `config.js` | `OBJECTIF_LEVER_MIN` |
+| Le délai pour changer de position (15 min, valeur par défaut) | `config.js` | `OBJECTIF_POSITION_MIN` ; chacun peut le changer dans l'onglet Réglages |
+| Les choix rapides proposés dans Réglages | `config.js` | `CHOIX_LEVER` et `CHOIX_POSITION` |
+| Les messages de rappel | `config.js` | `TEXTES` (`rappel…`) ; `{prenom, }` et `{, prenom}` sont remplacés par le prénom |
+| L'objectif de pause (1 par heure, valeur par défaut) | `config.js` | `OBJECTIF_LEVER_MIN` |
 | Le temps debout minimal pour qu'une pause compte (60 s) | `config.js` | `DUREE_MIN_PAUSE_S` |
 | Les messages de l'onglet Se lever | `config.js` | `TEXTES` (`lever…`, `conseilLever…`) |
 | Les conseils du jour et les phrases de comparaison | `config.js` | `TEXTES` (`conseil…`, `comparaison…`) |
@@ -80,7 +84,7 @@ Le JavaScript retrouve les éléments de la page par leur **`id`**. Tu peux dép
 
 1. **Ne renomme pas et ne supprime pas les `id`** comme `btnConnecter`, `btnDemo`, `btnCalibrer`, `presence`, `immobile`, `curseur`, `dos`, etc.
 2. **Sur la silhouette**, chaque zone de capteur doit garder son `id` : `z_FG`, `z_FD`, `z_CG`, `z_CD`, `z_DOS_G`, `z_DOS_D` (la forme), et `t_FG`, `t_FD`, etc. (le pourcentage). Tu peux changer leur forme, leur taille et leur position.
-3. **Garde l'ordre des scripts** à la fin de `index.html` : `config.js`, `dessins.js`, `app.js`, `journee.js`, `onglets.js`, puis `sources.js`. Après une mise à jour, **augmente le numéro `?v=`** de chaque fichier pour que Chrome recharge les nouvelles versions.
+3. **Garde l'ordre des scripts** à la fin de `index.html` : `config.js`, `reglages.js`, `dessins.js`, `app.js`, `journee.js`, `rappels.js`, `onglets.js`, puis `sources.js`. Après une mise à jour, **augmente le numéro `?v=`** de chaque fichier pour que Chrome recharge les nouvelles versions.
 4. **Dans `POSTURES`, garde « Bonne posture » en premier** : elle sert de référence (1,0) à tous les calculs.
 5. **Ne modifie pas les sections ⚠️ de `config.js`** sans en parler à Vincent : elles doivent correspondre au programme de l'ESP32.
 6. **Après chaque modification, teste en mode démo** : si quelque chose ne bouge plus, appuie sur **F12** dans Chrome et regarde l'onglet **Console** pour voir l'erreur en rouge.
@@ -117,6 +121,9 @@ Le JavaScript retrouve les éléments de la page par leur **`id`**. Tu peux dép
 ---
 
 ## 6. Avec le vrai coussin (Vincent)
+
+**Rappels et vibration :** quand un objectif est dépassé, l'application affiche une bannière, une notification de l'ordinateur (si activée dans Réglages et si l'onglet est en arrière-plan) et envoie au coussin la commande Bluetooth `V=3` (se lever) ou `V=1` (changer de position). Le programme de l'ESP32 (`esp32/coussin_ble_3zones.py`) fait alors vibrer le module sur **D25** et clignoter la **LED bleue** de la carte. L'application doit rester ouverte pour envoyer les rappels.
+
 
 1. Lance `coussin_ble_3zones.py` sur l'ESP32.
 2. Ouvre l'application **en ligne** (adresse GitHub Pages) dans **Chrome** sur ordinateur, ou dans **Bluefy** sur iPhone. La version en ligne est en HTTPS, ce qu'exige le Bluetooth.

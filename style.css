@@ -218,3 +218,36 @@ svg { width: 100%; height: auto; display: block; }
 .maintenant-message.alerte { color: var(--rose); font-weight: 600; }
 .titre-jour { font-family: var(--police-titres); font-weight: 500; font-size: 1.1em; }
 .chiffres.deux { grid-template-columns: repeat(2, minmax(0, 1fr)); height: 100%; align-content: center; }
+
+/* ---------- Réglages ---------- */
+.reglage { margin-bottom: 16px; }
+.reglage-titre { display: block; font-size: .9em; font-weight: 600; margin-bottom: 8px; }
+.choix { display: flex; flex-wrap: wrap; gap: 8px; }
+.choix button { min-width: 78px; }
+.choix button.choisi { background: var(--marque); color: #fff; border-color: var(--marque); }
+.champ {
+  font: inherit; padding: 9px 14px; border-radius: 999px; width: 100%; max-width: 280px;
+  border: 1px solid var(--bord); background: var(--carte); color: var(--texte);
+}
+.champ:focus { outline: 2px solid var(--marque-vive); outline-offset: 1px; }
+.interrupteur { display: flex; align-items: center; gap: 10px; margin: 10px 0; cursor: pointer; font-size: .95em; }
+.interrupteur input { width: 20px; height: 20px; accent-color: var(--marque); flex-shrink: 0; }
+.alerte-texte { color: var(--rose); }
+.alerte-texte:empty { display: none; }
+
+/* ---------- Bannière de rappel ---------- */
+.banniere {
+  position: fixed; left: 50%; top: 16px; z-index: 50;
+  transform: translate(-50%, -160%); opacity: 0; visibility: hidden;
+  transition: transform .35s ease, opacity .35s ease, visibility .35s;
+  display: flex; align-items: center; gap: 12px;
+  width: min(560px, calc(100% - 32px));
+  padding: 14px 16px; border-radius: var(--arrondi);
+  background: var(--carte); box-shadow: 0 8px 30px rgba(59, 42, 30, .18);
+}
+.banniere.visible { transform: translate(-50%, 0); opacity: 1; visibility: visible; }
+.banniere.lever { background: #F8E9EA; color: #7A3A41; }
+.banniere.position { background: var(--marque-pale); color: var(--marque-texte); }
+.banniere-symbole { height: 34px; width: auto; flex-shrink: 0; }
+#banniereTexte { flex: 1; font-weight: 600; }
+#banniereFermer { border: none; background: transparent; font-size: 1.4em; line-height: 1; padding: 4px 8px; color: var(--doux); }

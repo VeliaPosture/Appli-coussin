@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Nunito+Sans:wght@400;600&display=swap">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 
@@ -29,6 +29,13 @@
   </nav>
 </header>
 
+<!-- ============ BANNIÈRE DE RAPPEL (voir rappels.js) ============ -->
+<div class="banniere" id="banniere" role="status" aria-live="polite">
+  <img src="images/symbole-velia.png" alt="" class="banniere-symbole">
+  <div id="banniereTexte"></div>
+  <button id="banniereFermer" aria-label="Fermer le rappel">×</button>
+</div>
+
 <main>
 
   <!-- ===================================================================
@@ -38,7 +45,7 @@
 
     <div class="carte invitation" id="invitation">
       <div>
-        <div class="invitation-titre">Bienvenue sur Vélia</div>
+        <div class="invitation-titre" id="invitationTitre">Bienvenue sur Vélia</div>
         <div class="petit-texte">Connecte ton coussin ou essaie le mode démo pour voir ta posture en direct.</div>
       </div>
       <button class="principal" data-aller="reglages">Commencer</button>
@@ -256,6 +263,37 @@
        ONGLET 4 : RÉGLAGES (connexion, calibration, démo, enregistrement)
        =================================================================== -->
   <section class="onglet" id="onglet-reglages" role="tabpanel" hidden>
+    <!-- Mes objectifs et mes rappels (voir reglages.js) -->
+    <div class="carte">
+      <div class="titre-section">Mes objectifs</div>
+      <div class="reglage">
+        <div class="reglage-titre">Me lever au moins toutes les</div>
+        <div class="choix" id="choixLever"></div>
+      </div>
+      <div class="reglage">
+        <div class="reglage-titre">Changer de position au moins toutes les</div>
+        <div class="choix" id="choixPosition"></div>
+      </div>
+      <div class="petit-texte" id="texteHistorique"></div>
+    </div>
+
+    <div class="carte">
+      <div class="titre-section">Moi et mes rappels</div>
+      <div class="reglage">
+        <label class="reglage-titre" for="champPrenom">Mon prénom</label>
+        <input type="text" id="champPrenom" class="champ" placeholder="Vincent" maxlength="30" autocomplete="given-name">
+      </div>
+      <label class="interrupteur">
+        <input type="checkbox" id="caseNotifications">
+        <span>Notifications de l'ordinateur quand Vélia est en arrière-plan</span>
+      </label>
+      <div class="petit-texte alerte-texte" id="messageNotifications"></div>
+      <label class="interrupteur">
+        <input type="checkbox" id="caseVibration">
+        <span>Faire vibrer le coussin lors des rappels</span>
+      </label>
+    </div>
+
     <div class="carte">
       <div class="titre-section">Coussin</div>
       <div class="barre-outils">
@@ -296,13 +334,15 @@
   </section>
 </main>
 
-<!-- L'ordre compte : config, les dessins, la logique, le résumé, les onglets, puis les sources de données.
-     Le « ?v=6 » force Chrome à recharger les fichiers : augmente ce numéro à chaque mise à jour. -->
-<script src="config.js?v=6"></script>
-<script src="dessins.js?v=6"></script>
-<script src="app.js?v=6"></script>
-<script src="journee.js?v=6"></script>
-<script src="onglets.js?v=6"></script>
-<script src="sources.js?v=6"></script>
+<!-- L'ordre compte : config, les réglages, les dessins, la logique, le résumé, les rappels, les onglets, puis les sources de données.
+     Le « ?v=7 » force Chrome à recharger les fichiers : augmente ce numéro à chaque mise à jour. -->
+<script src="config.js?v=7"></script>
+<script src="reglages.js?v=7"></script>
+<script src="dessins.js?v=7"></script>
+<script src="app.js?v=7"></script>
+<script src="journee.js?v=7"></script>
+<script src="rappels.js?v=7"></script>
+<script src="onglets.js?v=7"></script>
+<script src="sources.js?v=7"></script>
 </body>
 </html>

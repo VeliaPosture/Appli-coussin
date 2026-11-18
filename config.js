@@ -59,8 +59,12 @@ const DUREE_CONFIRMATION_POSTURE = 3000; // ms : une posture doit durer 3 s avan
 const DISTANCE_MIN_POSTURES = 0.2;      // deux postures plus proches que ça « se ressemblent »
 
 // Objectifs (réglables dans l'onglet Réglages à l'étape 4)
-const OBJECTIF_POSITION_MIN = 15;   // changer de position au moins toutes les 15 minutes
-const OBJECTIF_LEVER_MIN = 60;      // se lever au moins une fois par heure assise
+// Valeurs par défaut : chaque personne peut les changer dans l'onglet Réglages (reglages.js)
+let OBJECTIF_POSITION_MIN = 15;     // changer de position au moins toutes les 15 minutes
+let OBJECTIF_LEVER_MIN = 60;        // se lever au moins une fois par heure assise
+const CHOIX_POSITION = [10, 15, 20, 30];   // choix rapides proposés dans Réglages (minutes)
+const CHOIX_LEVER = [30, 45, 60, 90];
+const RAPPEL_LEVER_REPETER_MIN = 15;       // si on reste assis, nouveau rappel toutes les 15 min
 const DUREE_MIN_PAUSE_S = 60;       // il faut rester debout au moins 60 s pour que ça compte comme une pause
 
 // Résumé de la journée
@@ -108,7 +112,7 @@ const TEXTES = {
   comparaisonEgal: "Comme la journée précédente",
   comparaisonPremiere: "Ta première journée avec Vélia",
   tranchesPasEncore: "Reste assis {min} min pour voir ton résultat",
-  conseilBravo: "Belle journée pour ton dos ! Continue de bouger régulièrement.",
+  conseilBravo: "Belle journée pour ton dos{, prenom} ! Continue de bouger régulièrement.",
   conseilBouger: "Tu restes souvent plus de {min} minutes dans la même position. Change un peu de position de temps en temps : ton dos te remerciera.",
   conseilHeure: "Tu as tendance à être {nom} vers {h} h. Un petit rappel à ce moment-là pourrait t'aider.",
   conseilHabitude: "Ta principale habitude aujourd'hui : {nom}. Essaie de te recentrer quand tu y penses.",
@@ -121,10 +125,18 @@ const TEXTES = {
   leverBientot: "Prochaine pause conseillée dans {min} min",
   leverMaintenant: "C'est le moment de te lever quelques minutes !",
   leverDepasse: "Tu es assis depuis plus de {min} min : lève-toi, ton dos t'attend !",
-  conseilLeverBravo: "Objectif atteint ! Tes pauses régulières font du bien à ton dos et à ta concentration.",
-  conseilLeverPresque: "Plus que {n} pause(s) pour atteindre ton objectif aujourd'hui.",
+  conseilLeverBravo: "Objectif atteint{, prenom} ! Tes pauses régulières font du bien à ton dos et à ta concentration.",
+  conseilLeverPresque: "Plus que {n} pour atteindre ton objectif aujourd'hui.",
   conseilLeverLong: "Ta plus longue période assise a duré {duree}. Essaie de ne pas dépasser {min} min sans te lever.",
   conseilLeverDebut: "Lève-toi au moins une fois par heure : c'est une des meilleures habitudes pour ton dos.",
+
+  // Accueil et rappels ({prenom, } et {, prenom} sont remplacés par ton prénom s'il est défini)
+  invitationTitre: "Bienvenue sur Vélia{, prenom}",
+  rappelLever: "{prenom, }c'est le moment de te lever quelques minutes !",
+  rappelLeverEncore: "{prenom, }tu es assis depuis {duree}. Une petite pause ?",
+  rappelPosition: "{prenom, }ça fait {min} min que tu n'as pas bougé. Change un peu de position !",
+  reglagesHistorique: "Les journées déjà enregistrées gardent leurs résultats : un nouvel objectif s'applique à partir de maintenant.",
+  notificationsRefusees: "Les notifications sont bloquées dans ton navigateur. Autorise-les dans les paramètres du site pour les recevoir.",
   aucuneDonnee: "Aucune donnée pour cette journée.",
   resumeGauche: "Tu as passé {pct} % de ton temps assis appuyé sur la fesse gauche.",
   resumeDroite: "Tu as passé {pct} % de ton temps assis appuyé sur la fesse droite.",

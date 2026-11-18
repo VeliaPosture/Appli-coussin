@@ -90,6 +90,7 @@ function compterJournee(info) {
   derniersTemps[m] = info.temps;
   const dt = precedent === null ? 1 : Math.min(Math.max(info.temps - precedent, 0), 5000) / 1000;
   compterPause(m, info, dt);
+  if (typeof verifierRappels === "function") verifierRappels(m, info);
   if (!info.assis) {                         // debout : la tranche en cours repart à zéro
     tranches[m] = { temps: 0, bouge: false };
     dernieresPostures[m] = null;
@@ -182,8 +183,8 @@ function anneau(pct, couleur, texte) {
   const plein = Math.max(0, Math.min(100, pct)) / 100 * c;
   return `<svg viewBox="0 0 96 96" role="img" aria-label="${texte}">
     <circle cx="48" cy="48" r="${r}" fill="none" stroke="#F3E6D8" stroke-width="10"/>
-    <circle cx="48" cy="48" r="${r}" fill="none" stroke="${couleur}" stroke-width="10" stroke-linecap="round"
-            stroke-dasharray="${plein} ${c}" transform="rotate(-90 48 48)"/>
+    ${plein > 0 ? `<circle cx="48" cy="48" r="${r}" fill="none" stroke="${couleur}" stroke-width="10" stroke-linecap="round"
+            stroke-dasharray="${plein} ${c}" transform="rotate(-90 48 48)"/>` : ""}
     <text x="48" y="54" text-anchor="middle">${texte}</text>
   </svg>`;
 }
@@ -277,7 +278,7 @@ function afficherPosture() {
   $("phraseJournee").hidden = false;
 
   // ---------- Conseil du jour ----------
-  $("conseilJournee").textContent = choisirConseil(s, taux, pctBonne, mauvaises);
+  $("conseilJournee").textContent = personnaliser(choisirConseil(s, taux, pctBonne, mauvaises));
 
   // ---------- Bandes ----------
   $("blocPosture").hidden = !avecPostures;
@@ -415,8 +416,11 @@ function afficherLever() {
   if (pauses >= objectif) conseil = TEXTES.conseilLeverBravo;
   else if ((s.periodeMax || 0) > objectifS * 1.25) {
     conseil = TEXTES.conseilLeverLong.replace("{duree}", duree(s.periodeMax)).replace("{min}", OBJECTIF_LEVER_MIN);
-  } else conseil = TEXTES.conseilLeverPresque.replace("{n}", objectif - pauses);
-  $("conseilLever").textContent = conseil;
+  } else {
+    const reste = objectif - pauses;
+    conseil = TEXTES.conseilLeverPresque.replace("{n}", reste + (reste > 1 ? " pauses" : " pause"));
+  }
+  $("conseilLever").textContent = personnaliser(conseil);
 
   // ---------- Heure par heure ----------
   const C = COULEURS_JOURNEE;

@@ -9,6 +9,7 @@
 // =====================================================================
 
 let source = null;            // source active
+let caracteristiqueRx = null; // pour envoyer des commandes au coussin (ex. vibrer)
 let arreterSource = null;     // fonction qui arrête la source active
 let enregistrement = null;    // lignes enregistrées, ou null si on n'enregistre pas
 
@@ -48,6 +49,7 @@ $("btnConnecter").onclick = async () => {
     const serveur = await appareil.gatt.connect();
     const service = await serveur.getPrimaryService(UART_SERVICE);
     const tx = await service.getCharacteristic(UART_TX);
+    caracteristiqueRx = await service.getCharacteristic(UART_RX);
     await tx.startNotifications();
 
     let tampon = "";
@@ -68,12 +70,20 @@ $("btnConnecter").onclick = async () => {
     }, "Connecté à " + appareil.name);
 
     appareil.addEventListener("gattserverdisconnected", () => {
+      caracteristiqueRx = null;
       if (source === "bluetooth") { arreterSource = null; changerSource(null, null, "Coussin déconnecté"); }
     });
   } catch (e) {
     etat("Erreur : " + e.message);
   }
 };
+
+// Envoie une commande texte au coussin (ex. « V=3 » pour vibrer 3 fois)
+async function envoyerCommande(texte) {
+  if (source !== "bluetooth" || !caracteristiqueRx) return;
+  try { await caracteristiqueRx.writeValue(new TextEncoder().encode(texte + "\n")); }
+  catch (e) { console.warn("Commande non envoyée :", texte, e); }
+}
 
 // =====================================================================
 // 2. MODE DÉMO (personne simulée)
