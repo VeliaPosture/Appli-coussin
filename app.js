@@ -4,7 +4,6 @@
 // Point d'entrée : traiter(valeurs, tempsMs), appelé par sources.js
 // chaque fois qu'une mesure arrive (Bluetooth, démo ou relecture).
 // =====================================================================
-// hola mi amiga
 
 const $ = id => document.getElementById(id);
 const zones = Object.keys(INDEX);
@@ -34,7 +33,10 @@ function sauverCalibration(c) {
   try { localStorage.setItem(CLE_STOCKAGE, JSON.stringify(c)); } catch (e) {}
 }
 
-function etat(texte) { $("etat").textContent = texte; }
+function etat(texte) {
+  $("etat").textContent = texte;
+  if (typeof majPastille === "function") majPastille();   // pastille de l'en-tête (onglets.js)
+}
 
 // =====================================================================
 // RÉCEPTION D'UNE MESURE

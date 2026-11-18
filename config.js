@@ -48,11 +48,11 @@ const DELAI_ENTRE_MOUVEMENTS = 3000;  // ms : un mouvement continu ne compte qu'
 // =====================================================================
 const POSTURES = [
   { id: "droit",  nom: "Bonne posture",   consigne: "Assieds-toi droit, bien adossé",
-    bonne: true,  couleur: "#1d9e75", inclinaison: 0,   demo: [2600, 2500, 2400] },
+    bonne: true,  couleur: "#6F9E85", inclinaison: 0,   demo: [2600, 2500, 2400] },
   { id: "gauche", nom: "Penché à gauche", consigne: "Penche-toi vers la gauche et reste ainsi",
-    bonne: false, couleur: "#378add", inclinaison: -18, demo: [3300, 1500, 2600] },
+    bonne: false, couleur: "#5E87A0", inclinaison: -18, demo: [3300, 1500, 2600] },
   { id: "droite", nom: "Penché à droite", consigne: "Penche-toi vers la droite et reste ainsi",
-    bonne: false, couleur: "#d85a30", inclinaison: 18,  demo: [1600, 3200, 1200] },
+    bonne: false, couleur: "#C9848B", inclinaison: 18,  demo: [1600, 3200, 1200] },
 ];
 const DUREE_MESURE_POSTURE = 8;         // secondes de mesure par posture
 const DUREE_CONFIRMATION_POSTURE = 3000; // ms : une posture doit durer 3 s avant d'être affichée
@@ -61,24 +61,24 @@ const DISTANCE_MIN_POSTURES = 0.2;      // deux postures plus proches que ça «
 // Résumé de la journée
 const JOURS_CONSERVES = 60;     // nombre de jours gardés dans le navigateur
 const COULEURS_JOURNEE = {
-  gauche: "#378add",
-  centre: "#b4b2a9",
-  droite: "#d85a30",
-  dosAppuye: "#1d9e75",
-  dosDecolle: "#b4b2a9",
-  absent: "#e4e2dc",
+  gauche: "#5E87A0",
+  centre: "#D9C9B6",
+  droite: "#C9848B",
+  dosAppuye: "#6F9E85",
+  dosDecolle: "#D9C9B6",
+  absent: "#F3E6D8",
 };
 
 // Couleurs de la pression sur la silhouette : [niveau, couleur]
 // 0 = aucun contact, 1,0 = comme pendant la calibration, 1,5 = beaucoup plus.
 // La légende sous la silhouette utilise automatiquement ces couleurs.
 const COULEURS_PRESSION = [
-  [0.0, "#fbeee8"],
-  [0.5, "#f0997b"],
-  [1.0, "#d85a30"],
-  [1.5, "#8f3415"],
+  [0.0, "#FDF0E3"],
+  [0.5, "#F9B26B"],
+  [1.0, "#E07B1B"],
+  [1.5, "#8E450A"],
 ];
-const COULEUR_NON_BRANCHE = "#eeeeee";
+const COULEUR_NON_BRANCHE = "#F3ECE4";
 
 // Textes affichés (modifiables)
 const TEXTES = {

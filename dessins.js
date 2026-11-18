@@ -12,7 +12,7 @@ function dessinPosture(posture) {
   if (posture && posture.image) {
     return `<img src="${posture.image}" alt="${posture.nom}">`;
   }
-  const couleur = posture ? posture.couleur : "#b4b2a9";
+  const couleur = posture ? posture.couleur : "#C8B6A2";
   const angle = posture ? posture.inclinaison : 0;
   const personne = posture ? `
     <g transform="rotate(${angle} 60 80)">
@@ -23,10 +23,10 @@ function dessinPosture(posture) {
     </g>` : "";
   return `
   <svg viewBox="0 0 120 120" role="img" aria-label="${posture ? posture.nom : "Coussin vide"}">
-    <rect x="26" y="80" width="68" height="8" rx="3" fill="#d3d1c7"/>
-    <line x1="32" y1="88" x2="32" y2="112" stroke="#b4b2a9" stroke-width="4" stroke-linecap="round"/>
-    <line x1="88" y1="88" x2="88" y2="112" stroke="#b4b2a9" stroke-width="4" stroke-linecap="round"/>
+    <rect x="26" y="80" width="68" height="8" rx="3" fill="#E5D8C9"/>
+    <line x1="32" y1="88" x2="32" y2="112" stroke="#C8B6A2" stroke-width="4" stroke-linecap="round"/>
+    <line x1="88" y1="88" x2="88" y2="112" stroke="#C8B6A2" stroke-width="4" stroke-linecap="round"/>
     ${personne}
-    <rect x="34" y="36" width="52" height="44" rx="6" fill="none" stroke="#b4b2a9" stroke-width="2" stroke-dasharray="4 3"/>
+    <rect x="34" y="36" width="52" height="44" rx="6" fill="none" stroke="#C8B6A2" stroke-width="2" stroke-dasharray="4 3"/>
   </svg>`;
 }

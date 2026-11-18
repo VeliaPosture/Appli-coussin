@@ -3,168 +3,229 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Coussin intelligent</title>
-<link rel="stylesheet" href="style.css?v=3">
+<title>Vélia</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Nunito+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
+
+<!-- ============ EN-TÊTE : logo, nom, état de connexion ============ -->
+<header class="entete">
+  <div class="entete-contenu">
+    <img class="symbole" src="images/symbole-velia.png" alt="">
+    <div class="marque">vélia</div>
+    <span class="pastille" id="pastilleEtat">Non connecté</span>
+  </div>
+
+  <!-- ============ ONGLETS ============ -->
+  <nav class="onglets" role="tablist" aria-label="Sections de l'application">
+    <button role="tab" class="onglet-bouton" data-onglet="direct">En direct</button>
+    <button role="tab" class="onglet-bouton" data-onglet="posture">Posture</button>
+    <button role="tab" class="onglet-bouton" data-onglet="lever">Se lever</button>
+    <button role="tab" class="onglet-bouton" data-onglet="reglages">Réglages</button>
+  </nav>
+</header>
+
 <main>
-  <h1>Coussin intelligent</h1>
 
-  <!-- ============ BARRE D'OUTILS ============ -->
-  <div class="carte barre-outils">
-    <button class="principal" id="btnConnecter">Connecter le coussin</button>
-    <button id="btnDemo">Mode démo</button>
-    <button id="btnCalibrer" disabled>Calibrer</button>
-    <span id="etat">Aucune source de données</span>
-  </div>
+  <!-- ===================================================================
+       ONGLET 1 : EN DIRECT
+       =================================================================== -->
+  <section class="onglet" id="onglet-direct" role="tabpanel">
 
-  <div class="carte barre-outils">
-    <button id="btnEnregistrer" disabled>● Enregistrer</button>
-    <label class="bouton" for="fichierSession">Rejouer un fichier</label>
-    <input type="file" id="fichierSession" accept=".csv" hidden>
-    <label class="petit-label">Vitesse
-      <select id="vitesse">
-        <option value="1">×1</option>
-        <option value="5">×5</option>
-        <option value="20">×20</option>
-      </select>
-    </label>
-    <span id="etatEnregistrement"></span>
-  </div>
-
-  <!-- ============ CALIBRATION (s'affiche pendant la calibration) ============ -->
-  <div class="carte" id="calib">
-    <div class="etape" id="calibEtape"></div>
-    <div class="dessin-posture grand-dessin" id="calibDessin"></div>
-    <div class="consigne" id="calibConsigne"></div>
-    <div class="compte" id="calibCompte"></div>
-    <div class="etape" id="calibRecus"></div>
-    <div id="calibResultat"></div>
-    <button id="btnFermerCalib" hidden>Fermer</button>
-  </div>
-
-  <div class="grille">
-    <!-- ============ SILHOUETTE (vue de dos) ============ -->
-    <div class="carte">
-      <svg id="silhouette" viewBox="0 0 300 420" role="img" aria-label="Silhouette vue de dos, zones colorées selon la pression">
-        <g class="contour">
-          <circle cx="150" cy="42" r="26"/>
-          <rect x="140" y="68" width="20" height="12"/>
-          <rect x="74" y="88" width="18" height="128" rx="9"/>
-          <rect x="208" y="88" width="18" height="128" rx="9"/>
-          <rect x="96" y="80" width="108" height="168" rx="30"/>
-          <rect x="104" y="374" width="36" height="40" rx="8"/>
-          <rect x="160" y="374" width="36" height="40" rx="8"/>
-        </g>
-        <line class="colonne" x1="150" y1="96" x2="150" y2="236"/>
-        <!-- Zones de capteurs : l'id « z_XXX » doit correspondre au nom de zone dans config.js -->
-        <rect id="z_DOS_G" x="110" y="100" width="30" height="128" rx="10"/>
-        <rect id="z_DOS_D" x="160" y="100" width="30" height="128" rx="10"/>
-        <ellipse id="z_FG" cx="122" cy="276" rx="30" ry="25"/>
-        <ellipse id="z_FD" cx="178" cy="276" rx="30" ry="25"/>
-        <rect id="z_CG" x="96" y="306" width="50" height="64" rx="10"/>
-        <rect id="z_CD" x="154" y="306" width="50" height="64" rx="10"/>
-        <!-- Pourcentages affichés sur chaque zone -->
-        <text id="t_DOS_G" x="125" y="164"></text>
-        <text id="t_DOS_D" x="175" y="164"></text>
-        <text id="t_FG" x="122" y="281"></text>
-        <text id="t_FD" x="178" y="281"></text>
-        <text id="t_CG" x="121" y="343"></text>
-        <text id="t_CD" x="179" y="343"></text>
-        <text class="cote" x="40" y="280">G</text>
-        <text class="cote" x="260" y="280">D</text>
-      </svg>
-      <div class="legende">
-        Pression <i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> forte
-        · <i class="l0"></i> non branché
+    <div class="carte invitation" id="invitation">
+      <div>
+        <div class="invitation-titre">Bienvenue sur Vélia</div>
+        <div class="petit-texte">Connecte ton coussin ou essaie le mode démo pour voir ta posture en direct.</div>
       </div>
+      <button class="principal" data-aller="reglages">Commencer</button>
     </div>
 
-    <!-- ============ INDICATEURS ============ -->
-    <div class="carte">
-      <div class="indic">
-        <div class="titre">Posture</div>
-        <div class="posture-live">
-          <div class="dessin-posture" id="dessinPosture"></div>
-          <div class="grand" id="posture">--</div>
+    <div class="grille">
+      <!-- Silhouette (vue de dos) -->
+      <div class="carte">
+        <svg id="silhouette" viewBox="0 0 300 420" role="img" aria-label="Silhouette vue de dos, zones colorées selon la pression">
+          <g class="contour">
+            <circle cx="150" cy="42" r="26"/>
+            <rect x="140" y="68" width="20" height="12"/>
+            <rect x="74" y="88" width="18" height="128" rx="9"/>
+            <rect x="208" y="88" width="18" height="128" rx="9"/>
+            <rect x="96" y="80" width="108" height="168" rx="30"/>
+            <rect x="104" y="374" width="36" height="40" rx="8"/>
+            <rect x="160" y="374" width="36" height="40" rx="8"/>
+          </g>
+          <line class="colonne" x1="150" y1="96" x2="150" y2="236"/>
+          <!-- Zones de capteurs : l'id « z_XXX » doit correspondre au nom de zone dans config.js -->
+          <rect id="z_DOS_G" x="110" y="100" width="30" height="128" rx="10"/>
+          <rect id="z_DOS_D" x="160" y="100" width="30" height="128" rx="10"/>
+          <ellipse id="z_FG" cx="122" cy="276" rx="30" ry="25"/>
+          <ellipse id="z_FD" cx="178" cy="276" rx="30" ry="25"/>
+          <rect id="z_CG" x="96" y="306" width="50" height="64" rx="10"/>
+          <rect id="z_CD" x="154" y="306" width="50" height="64" rx="10"/>
+          <!-- Pourcentages affichés sur chaque zone -->
+          <text id="t_DOS_G" x="125" y="164"></text>
+          <text id="t_DOS_D" x="175" y="164"></text>
+          <text id="t_FG" x="122" y="281"></text>
+          <text id="t_FD" x="178" y="281"></text>
+          <text id="t_CG" x="121" y="343"></text>
+          <text id="t_CD" x="179" y="343"></text>
+          <text class="cote" x="40" y="280">G</text>
+          <text class="cote" x="260" y="280">D</text>
+        </svg>
+        <div class="legende">
+          Pression <i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> forte
+          · <i class="l0"></i> non branché
         </div>
       </div>
-      <div class="indic">
-        <div class="titre">Présence</div>
-        <div class="grand" id="presence">--</div>
-      </div>
-      <div class="indic">
-        <div class="titre">Immobile depuis</div>
-        <div class="grand" id="immobile">--</div>
-      </div>
-      <div class="indic">
-        <div class="titre">Équilibre gauche / droite (assise)</div>
-        <div class="equilibre"><div class="centre"></div><div class="curseur" id="curseur"></div></div>
-        <div class="petit"><span id="pctG">G --</span><span id="pctD">D --</span></div>
-      </div>
-      <div class="indic">
-        <div class="titre">Dos</div>
-        <div class="grand" id="dos">--</div>
-      </div>
-      <div class="petit"><span id="infoCalib">Pas encore calibré</span></div>
-    </div>
-  </div>
 
-  <!-- ============ MA JOURNÉE (résumé, voir journee.js) ============ -->
-  <section class="carte" id="journee">
-    <div class="journee-entete">
-      <button id="jourPrecedent" aria-label="Jour précédent">‹</button>
-      <div class="journee-titre">
-        <div id="titreJournee">Ma journée</div>
-        <div class="petit-texte" id="sousTitreJournee"></div>
-        <span class="badge" id="badgeDemo" hidden>Données de démo</span>
-      </div>
-      <button id="jourSuivant" aria-label="Jour suivant">›</button>
-    </div>
-
-    <div class="phrase" id="phraseJournee"></div>
-
-    <div id="contenuJournee" hidden>
-      <div class="bloc" id="blocPosture">
-        <div class="titre-bloc">Posture</div>
-        <div class="bande" id="bandePosture"></div>
-        <div class="legende-bande" id="legendePosture"></div>
-      </div>
-
-      <div class="bloc" id="blocCote">
-        <div class="titre-bloc">Côté où tu appuies</div>
-        <div class="bande" id="bandeCote"></div>
-        <div class="legende-bande" id="legendeCote"></div>
-      </div>
-
-      <div class="bloc" id="blocDos">
-        <div class="titre-bloc">Dos</div>
-        <div class="bande" id="bandeDos"></div>
-      </div>
-
-      <div class="bloc">
-        <div class="titre-bloc">Ma journée heure par heure</div>
-        <div class="bande" id="bandeHeures"></div>
-        <div class="petit" id="heuresEtiquettes"></div>
-      </div>
-
-      <div class="chiffres">
-        <div><div class="petit-texte">Assis</div><div class="chiffre" id="statAssis">--</div></div>
-        <div><div class="petit-texte">Mouvements</div><div class="chiffre" id="statMouvements">--</div></div>
-        <div><div class="petit-texte">Plus long immobile</div><div class="chiffre" id="statImmobile">--</div></div>
+      <!-- Indicateurs -->
+      <div class="carte">
+        <div class="indic">
+          <div class="titre">Posture</div>
+          <div class="posture-live">
+            <div class="dessin-posture" id="dessinPosture"></div>
+            <div class="grand" id="posture">--</div>
+          </div>
+        </div>
+        <div class="indic">
+          <div class="titre">Présence</div>
+          <div class="grand" id="presence">--</div>
+        </div>
+        <div class="indic">
+          <div class="titre">Immobile depuis</div>
+          <div class="grand" id="immobile">--</div>
+        </div>
+        <div class="indic">
+          <div class="titre">Équilibre gauche / droite (assise)</div>
+          <div class="equilibre"><div class="centre"></div><div class="curseur" id="curseur"></div></div>
+          <div class="petit"><span id="pctG">G --</span><span id="pctD">D --</span></div>
+        </div>
+        <div class="indic">
+          <div class="titre">Dos</div>
+          <div class="grand" id="dos">--</div>
+        </div>
+        <div class="petit"><span id="infoCalib">Pas encore calibré</span></div>
       </div>
     </div>
+  </section>
 
-    <button id="btnEffacerDemo" hidden>Effacer les données de démo</button>
+  <!-- ===================================================================
+       ONGLET 2 : POSTURE (résumé de la journée, voir journee.js)
+       =================================================================== -->
+  <section class="onglet" id="onglet-posture" role="tabpanel" hidden>
+    <section class="carte" id="journee">
+      <div class="journee-entete">
+        <button id="jourPrecedent" aria-label="Jour précédent">‹</button>
+        <div class="journee-titre">
+          <div id="titreJournee">Ma journée</div>
+          <div class="petit-texte" id="sousTitreJournee"></div>
+          <span class="badge" id="badgeDemo" hidden>Données de démo</span>
+        </div>
+        <button id="jourSuivant" aria-label="Jour suivant">›</button>
+      </div>
+
+      <div class="phrase" id="phraseJournee"></div>
+
+      <div id="contenuJournee" hidden>
+        <div class="bloc" id="blocPosture">
+          <div class="titre-bloc">Posture</div>
+          <div class="bande" id="bandePosture"></div>
+          <div class="legende-bande" id="legendePosture"></div>
+        </div>
+
+        <div class="bloc" id="blocCote">
+          <div class="titre-bloc">Côté où tu appuies</div>
+          <div class="bande" id="bandeCote"></div>
+          <div class="legende-bande" id="legendeCote"></div>
+        </div>
+
+        <div class="bloc" id="blocDos">
+          <div class="titre-bloc">Dos</div>
+          <div class="bande" id="bandeDos"></div>
+        </div>
+
+        <div class="bloc">
+          <div class="titre-bloc">Ma journée heure par heure</div>
+          <div class="bande" id="bandeHeures"></div>
+          <div class="petit" id="heuresEtiquettes"></div>
+        </div>
+
+        <div class="chiffres">
+          <div><div class="petit-texte">Assis</div><div class="chiffre" id="statAssis">--</div></div>
+          <div><div class="petit-texte">Mouvements</div><div class="chiffre" id="statMouvements">--</div></div>
+          <div><div class="petit-texte">Plus long immobile</div><div class="chiffre" id="statImmobile">--</div></div>
+        </div>
+      </div>
+
+      <button id="btnEffacerDemo" hidden>Effacer les données de démo</button>
+    </section>
+  </section>
+
+  <!-- ===================================================================
+       ONGLET 3 : SE LEVER (construit à l'étape 3)
+       =================================================================== -->
+  <section class="onglet" id="onglet-lever" role="tabpanel" hidden>
+    <div class="carte a-venir">
+      <img src="images/symbole-velia.png" alt="" class="a-venir-symbole">
+      <div class="invitation-titre">Se lever, bientôt ici</div>
+      <div class="petit-texte">Tes pauses debout, ton objectif d'une pause par heure et tes plus longues périodes assis apparaîtront dans cet onglet.</div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       ONGLET 4 : RÉGLAGES (connexion, calibration, démo, enregistrement)
+       =================================================================== -->
+  <section class="onglet" id="onglet-reglages" role="tabpanel" hidden>
+    <div class="carte">
+      <div class="titre-section">Coussin</div>
+      <div class="barre-outils">
+        <button class="principal" id="btnConnecter">Connecter le coussin</button>
+        <button id="btnDemo">Mode démo</button>
+        <button id="btnCalibrer" disabled>Calibrer</button>
+      </div>
+      <div class="etat-ligne" id="etat">Aucune source de données</div>
+    </div>
+
+    <!-- Calibration (s'affiche pendant la calibration) -->
+    <div class="carte" id="calib">
+      <div class="etape" id="calibEtape"></div>
+      <div class="dessin-posture grand-dessin" id="calibDessin"></div>
+      <div class="consigne" id="calibConsigne"></div>
+      <div class="compte" id="calibCompte"></div>
+      <div class="etape" id="calibRecus"></div>
+      <div id="calibResultat"></div>
+      <button id="btnFermerCalib" hidden>Fermer</button>
+    </div>
+
+    <div class="carte">
+      <div class="titre-section">Sessions enregistrées</div>
+      <div class="barre-outils">
+        <button id="btnEnregistrer" disabled>● Enregistrer</button>
+        <label class="bouton" for="fichierSession">Rejouer un fichier</label>
+        <input type="file" id="fichierSession" accept=".csv" hidden>
+        <label class="petit-label">Vitesse
+          <select id="vitesse">
+            <option value="1">×1</option>
+            <option value="5">×5</option>
+            <option value="20">×20</option>
+          </select>
+        </label>
+      </div>
+      <div class="etat-ligne" id="etatEnregistrement"></div>
+    </div>
   </section>
 </main>
 
-<!-- L'ordre compte : config, les dessins, la logique, le résumé, puis les sources de données.
-     Le « ?v=3 » force Chrome à recharger les fichiers : augmente ce numéro à chaque mise à jour. -->
-<script src="config.js?v=3"></script>
-<script src="dessins.js?v=3"></script>
-<script src="app.js?v=3"></script>
-<script src="journee.js?v=3"></script>
-<script src="sources.js?v=3"></script>
+<!-- L'ordre compte : config, les dessins, la logique, le résumé, les onglets, puis les sources de données.
+     Le « ?v=4 » force Chrome à recharger les fichiers : augmente ce numéro à chaque mise à jour. -->
+<script src="config.js?v=4"></script>
+<script src="dessins.js?v=4"></script>
+<script src="app.js?v=4"></script>
+<script src="journee.js?v=4"></script>
+<script src="onglets.js?v=4"></script>
+<script src="sources.js?v=4"></script>
 </body>
 </html>

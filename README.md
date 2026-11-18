@@ -1,4 +1,4 @@
-# Coussin intelligent : l'application
+# Vélia : l'application du coussin intelligent
 
 Application web qui se connecte au coussin par Bluetooth, le calibre et affiche en direct comment la personne est assise : silhouette colorée selon la pression, présence, temps d'immobilité, équilibre gauche/droite et contact du dos.
 
@@ -10,7 +10,7 @@ Application web qui se connecte au coussin par Bluetooth, le calibre et affiche 
 
 1. Télécharge le projet (voir la section 5 pour GitHub).
 2. Ouvre `index.html` dans **Chrome**.
-3. Clique sur **Mode démo** : une personne simulée s'assoit, se penche, bouge et se lève, en boucle.
+3. Va dans l'onglet **Réglages** (ou clique sur **Commencer**) et clique sur **Mode démo** : une personne simulée s'assoit, se penche, bouge et se lève, en boucle.
 4. Ou clique sur **Rejouer un fichier** et choisis `exemple_session.csv` : 9 minutes de données réalistes.
 5. Le menu **Vitesse** (×1, ×5, ×20) accélère la démo et la relecture.
 
@@ -32,6 +32,8 @@ Plus bas, la section **Ma journée** résume chaque journée : côté où on app
 | `app.js` | La logique : calibration, calculs, mise à jour de l'affichage | Programmeurs |
 | `journee.js` | Le résumé « Ma journée » : comptage par jour, bandes, phrase résumé | Programmeurs |
 | `dessins.js` | Les petits dessins des postures (personne vue de dos sur une chaise) | Équipe design |
+| `onglets.js` | La navigation entre les onglets (En direct, Posture, Se lever, Réglages) et la pastille de l'en-tête | Programmeurs |
+| `images/` | Le logo Vélia : `logo-velia.png` (complet), `symbole-velia.png` (en-tête), `favicon.png` (icône d'onglet) | Équipe design |
 | `sources.js` | D'où viennent les données : Bluetooth, démo, enregistrement, relecture | Vincent |
 | `exemple_session.csv` | Une session enregistrée pour les tests | — |
 
@@ -43,7 +45,9 @@ Plus bas, la section **Ma journée** résume chaque journée : côté où on app
 
 | Je veux changer… | Fichier | Où |
 |---|---|---|
-| Les couleurs générales (fond, boutons, texte) | `style.css` | Le bloc `:root` tout en haut |
+| Les couleurs générales (marque Vélia, sauge, ardoise, crème…) | `style.css` | Le bloc `:root` tout en haut, chaque couleur y est commentée |
+| Le logo de l'en-tête | `images/` | Remplace `symbole-velia.png` par une nouvelle image du même nom (fond transparent) |
+| Les polices (Outfit pour les titres, Nunito Sans pour le texte) | `index.html` et `style.css` | Le lien Google Fonts dans `index.html`, puis `--police` et `--police-titres` |
 | La police de caractères | `style.css` | `--police` dans `:root` |
 | Les couleurs de pression de la silhouette | `config.js` | `COULEURS_PRESSION` (la légende suit automatiquement) |
 | Un texte affiché (« Assis », « Décollé », consignes de calibration…) | `config.js` | `TEXTES` |
@@ -69,7 +73,7 @@ Le JavaScript retrouve les éléments de la page par leur **`id`**. Tu peux dép
 
 1. **Ne renomme pas et ne supprime pas les `id`** comme `btnConnecter`, `btnDemo`, `btnCalibrer`, `presence`, `immobile`, `curseur`, `dos`, etc.
 2. **Sur la silhouette**, chaque zone de capteur doit garder son `id` : `z_FG`, `z_FD`, `z_CG`, `z_CD`, `z_DOS_G`, `z_DOS_D` (la forme), et `t_FG`, `t_FD`, etc. (le pourcentage). Tu peux changer leur forme, leur taille et leur position.
-3. **Garde l'ordre des scripts** à la fin de `index.html` : `config.js`, `dessins.js`, `app.js`, `journee.js`, puis `sources.js`. Après une mise à jour, **augmente le numéro `?v=`** de chaque fichier pour que Chrome recharge les nouvelles versions.
+3. **Garde l'ordre des scripts** à la fin de `index.html` : `config.js`, `dessins.js`, `app.js`, `journee.js`, `onglets.js`, puis `sources.js`. Après une mise à jour, **augmente le numéro `?v=`** de chaque fichier pour que Chrome recharge les nouvelles versions.
 4. **Dans `POSTURES`, garde « Bonne posture » en premier** : elle sert de référence (1,0) à tous les calculs.
 5. **Ne modifie pas les sections ⚠️ de `config.js`** sans en parler à Vincent : elles doivent correspondre au programme de l'ESP32.
 6. **Après chaque modification, teste en mode démo** : si quelque chose ne bouge plus, appuie sur **F12** dans Chrome et regarde l'onglet **Console** pour voir l'erreur en rouge.
