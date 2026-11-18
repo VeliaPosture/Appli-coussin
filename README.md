@@ -16,7 +16,7 @@ Application web qui se connecte au coussin par Bluetooth, le calibre et affiche 
 
 Tu peux aussi tester la **calibration** en mode démo : la personne simulée suit les consignes.
 
-La **calibration** se fait en plusieurs positions, chacune illustrée par un petit dessin : coussin vide, puis chaque posture de la liste `POSTURES` (bonne posture, penché à gauche, penché à droite). L'application garde la « signature » de chaque posture et reconnaît ensuite en direct **la plus ressemblante** (carte « Posture », en vert pour la bonne posture). Une posture qui n'a pas été apprise (ex. penché vers l'avant) est classée dans la plus proche : ajoute-la à `POSTURES` pour qu'elle soit reconnue.
+La **calibration** se fait en plusieurs positions, chacune illustrée par un petit dessin. À chaque position, la personne se place à son rythme et appuie sur **Je suis prêt** ; la mesure (avec son compte à rebours) commence alors. Ordre : coussin vide, puis chaque posture de la liste `POSTURES` (bonne posture, penché à gauche, penché à droite). L'application garde la « signature » de chaque posture et reconnaît ensuite en direct **la plus ressemblante** (carte « Posture », en vert pour la bonne posture). Une posture qui n'a pas été apprise (ex. penché vers l'avant) est classée dans la plus proche : ajoute-la à `POSTURES` pour qu'elle soit reconnue.
 
 L'onglet **Posture** résume chaque journée avec deux objectifs : le **% du temps en bonne posture** (comparé à la journée précédente) et le **taux de réussite des changements de position** (le temps assis est découpé en tranches de 15 minutes ; une tranche est réussie si on a bougé ou changé de posture pendant la tranche). Un **conseil du jour** s'affiche selon tes résultats.
 

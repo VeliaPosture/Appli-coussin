@@ -149,6 +149,7 @@ svg { width: 100%; height: auto; display: block; }
 #calib .etape { font-size: .85em; color: var(--doux); }
 #calib .consigne { font-family: var(--police-titres); font-size: 1.5em; font-weight: 500; margin: 8px 0; }
 #calib .compte { font-family: var(--police-titres); font-size: 2.4em; font-weight: 600; color: var(--marque); }
+#calib .calib-boutons { justify-content: center; margin: 12px 0 4px; }
 #calibResultat table { margin: 12px auto 0; border-collapse: collapse; font-size: .9em; }
 #calibResultat td, #calibResultat th { padding: 5px 12px; border-bottom: 1px solid var(--bord); }
 #btnFermerCalib { margin-top: 12px; }

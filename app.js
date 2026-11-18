@@ -64,12 +64,12 @@ $("btnCalibrer").onclick = async () => {
   try {
     // Étape 1 : coussin vide. Puis une étape par posture de config.js.
     $("calibDessin").innerHTML = dessinPosture(null);
-    const vide = await mesurer(`Étape 1 sur ${total}`, TEXTES.etapeVide, "vide", 3, 5, 0);
+    const vide = await mesurer(`Étape 1 sur ${total}`, TEXTES.etapeVide, "vide", 5, 0);
     const brutes = {};
     for (let i = 0; i < POSTURES.length; i++) {
       const p = POSTURES[i];
       $("calibDessin").innerHTML = dessinPosture(p);
-      brutes[p.id] = await mesurer(`Étape ${i + 2} sur ${total} · ${p.nom}`, p.consigne, p.id, 5, DUREE_MESURE_POSTURE, 2);
+      brutes[p.id] = await mesurer(`Étape ${i + 2} sur ${total} · ${p.nom}`, p.consigne, p.id, DUREE_MESURE_POSTURE, 2);
     }
 
     // La première posture (la bonne) sert de référence : 1,0 = cette posture
@@ -119,6 +119,7 @@ $("btnCalibrer").onclick = async () => {
     $("calibConsigne").textContent = "Calibration interrompue : " + e.message;
   }
   consigneCalibration = null;
+  $("calibBoutons").hidden = true;
   $("calibCompte").textContent = "";
   $("calibRecus").textContent = "";
   $("btnFermerCalib").hidden = false;
@@ -128,18 +129,16 @@ $("btnCalibrer").onclick = async () => {
 
 $("btnFermerCalib").onclick = () => { $("calib").style.display = "none"; };
 
-// Compte à rebours, puis moyenne des valeurs reçues pendant « duree » secondes
-// (en ignorant les « ignorer » premières secondes, le temps de s'installer).
-async function mesurer(etape, consigne, type, preparation, duree, ignorer) {
+// Attend que la personne appuie sur « Je suis prêt », puis fait la moyenne des valeurs
+// reçues pendant « duree » secondes (en ignorant les « ignorer » premières secondes,
+// le temps de bien se placer après avoir appuyé).
+async function mesurer(etape, consigne, type, duree, ignorer) {
   $("calibEtape").textContent = etape;
   $("calibConsigne").textContent = consigne;
   $("calibRecus").textContent = "";
+  $("calibCompte").textContent = "";
   consigneCalibration = type;
-  for (let s = preparation; s > 0; s--) {
-    $("calibCompte").textContent = "Départ dans " + s;
-    bip(660, 0.08);
-    await pause(1000);
-  }
+  await attendrePret();
   bip(990, 0.3);                                   // bip long : la mesure commence
   echantillonsCalibration = [];
   for (let s = duree; s > 0; s--) {
@@ -160,6 +159,17 @@ async function mesurer(etape, consigne, type, preparation, duree, ignorer) {
   return moyennes;
 }
 const pause = ms => new Promise(r => setTimeout(r, ms));
+
+// Affiche les boutons « Je suis prêt » et « Annuler » et attend un clic.
+// Pas de limite de temps : la personne prend le temps qu'il faut pour se placer.
+function attendrePret() {
+  return new Promise((ok, echec) => {
+    $("calibBoutons").hidden = false;
+    $("btnPret").focus();
+    $("btnPret").onclick = () => { $("calibBoutons").hidden = true; ok(); };
+    $("btnAnnulerCalib").onclick = () => { $("calibBoutons").hidden = true; echec(new Error("annulée.")); };
+  });
+}
 
 // Petit bip (pour suivre la calibration sans regarder l'écran)
 let audio = null;
