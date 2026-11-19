@@ -72,6 +72,19 @@ function initialiserReglages() {
   caseVibration.checked = reglages.vibration;
   caseVibration.onchange = () => { reglages.vibration = caseVibration.checked; sauverReglages(); };
 
+  // Boutons pour essayer la vibration du coussin (pratique pour vérifier le branchement)
+  function testerVibration(n, nom) {
+    const msg = document.getElementById("messageTestVibration");
+    if (typeof source === "undefined" || source !== "bluetooth") {
+      msg.textContent = "Connecte d'abord le coussin (onglet Réglages → Connecter le coussin).";
+      return;
+    }
+    envoyerCommande("V=" + n);
+    msg.textContent = `Rappel « ${nom} » envoyé : le coussin devrait vibrer ${n} fois.`;
+  }
+  document.getElementById("btnTestPosition").onclick = () => testerVibration(VIBRATIONS_POSITION, "changer de position");
+  document.getElementById("btnTestLever").onclick = () => testerVibration(VIBRATIONS_LEVER, "se lever");
+
   const caseNotif = document.getElementById("caseNotifications");
   caseNotif.checked = reglages.notifications && "Notification" in window && Notification.permission === "granted";
   caseNotif.onchange = async () => {

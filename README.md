@@ -122,7 +122,7 @@ Le JavaScript retrouve les éléments de la page par leur **`id`**. Tu peux dép
 
 ## 6. Avec le vrai coussin (Vincent)
 
-**Rappels et vibration :** quand un objectif est dépassé, l'application affiche une bannière, une notification de l'ordinateur (si activée dans Réglages et si l'onglet est en arrière-plan) et envoie au coussin la commande Bluetooth `V=3` (se lever) ou `V=1` (changer de position). Le programme de l'ESP32 (`esp32/coussin_ble_3zones.py`) fait alors vibrer le module sur **D25** et clignoter la **LED bleue** de la carte. L'application doit rester ouverte pour envoyer les rappels.
+**Rappels et vibration :** quand un objectif est dépassé, l'application affiche une bannière, une notification de l'ordinateur (si activée dans Réglages et si l'onglet est en arrière-plan) et envoie au coussin la commande Bluetooth `V=2` (se lever) ou `V=1` (changer de position) — nombres réglables dans `config.js` (`VIBRATIONS_LEVER`, `VIBRATIONS_POSITION`). Les boutons **Tester** dans Réglages permettent d'essayer la vibration. Le programme de l'ESP32 (`esp32/coussin_ble_3zones.py`) fait alors vibrer le module sur **D25** et clignoter la **LED bleue** de la carte. L'application doit rester ouverte pour envoyer les rappels.
 
 
 1. Lance `coussin_ble_3zones.py` sur l'ESP32.

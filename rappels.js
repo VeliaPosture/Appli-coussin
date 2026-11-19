@@ -56,9 +56,9 @@ function rappeler(type, texte, temps) {
     try { new Notification("Vélia", { body: message, icon: "images/favicon.png" }); } catch (e) {}
   }
 
-  // Vibration du coussin : 3 vibrations pour se lever, 1 pour changer de position
+  // Vibration du coussin : nombres réglés dans config.js (VIBRATIONS_LEVER / VIBRATIONS_POSITION)
   if (reglages.vibration && typeof envoyerCommande === "function") {
-    envoyerCommande(type === "lever" ? "V=3" : "V=1");
+    envoyerCommande("V=" + (type === "lever" ? VIBRATIONS_LEVER : VIBRATIONS_POSITION));
   }
 }
 

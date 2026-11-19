@@ -64,6 +64,9 @@ let OBJECTIF_POSITION_MIN = 15;     // changer de position au moins toutes les 1
 let OBJECTIF_LEVER_MIN = 60;        // se lever au moins une fois par heure assise
 const CHOIX_POSITION = [10, 15, 20, 30];   // choix rapides proposés dans Réglages (minutes)
 const CHOIX_LEVER = [30, 45, 60, 90];
+// Nombre de vibrations du coussin pour chaque rappel (le coussin en fait au plus 5)
+const VIBRATIONS_POSITION = 1;             // assis sans changer de position trop longtemps
+const VIBRATIONS_LEVER = 2;                // pas levé depuis trop longtemps
 const RAPPEL_LEVER_REPETER_MIN = 15;       // si on reste assis, nouveau rappel toutes les 15 min
 const DUREE_MIN_PAUSE_S = 60;       // il faut rester debout au moins 60 s pour que ça compte comme une pause
 
